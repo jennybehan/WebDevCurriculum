@@ -48,3 +48,6 @@ git diff branch1...branch3
 `rebase`를 사용하면 브랜치 히스토리를 깨끗하게 유지해서 늘 최신 상태의 마스터 브랜치에서 작업한 것처럼 보이며, merge시 깔끔하게 마스터 브랜치에 적용된다. 
 
 * [더 참고해 볼 내용](https://www.atlassian.com/git/tutorials/merging-vs-rebasing)
+
+## git reflog
+`git reset --soft`로 커밋을 되돌리다가 잘못 되돌렸을 경우 `git reflog`를 이용해 변경사항을 확인하고 다시 `git reset`을 이용해 기록된 `HEAD@{<n>}`으로 되돌아 갈 수 있다.
