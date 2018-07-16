@@ -2,3 +2,11 @@
 
 ## git init
 * [참고](https://www.atlassian.com/git/tutorials/setting-up-a-repository/git-init)
+
+## git add
+### 새로 알게된 내용
+* `git add -p` 명령어: 해당 디렉토리에 있는 모든 변경사항을 다음 커밋을 위해 스테이징 시킨다.
+
+## git commit
+### 실습해보기
+* `git commit --amend`로 커밋 합치기
