@@ -1,2 +1,4 @@
-Hello, git!
-This is dummy text file!
+# Hello, git!
+
+## git init
+* [참고](https://www.atlassian.com/git/tutorials/setting-up-a-repository/git-init)
