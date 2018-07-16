@@ -10,3 +10,20 @@
 ## git commit
 ### 실습해보기
 * `git commit --amend`로 커밋 합치기
+
+## git diff
+### 새로 알게된 내용
+* `git diff`를 사용하면
+1. 경로 없이 호출할 경우 전체 레포지토리의 모든 변경사항을 보여준다.
+2. 마지막 커밋 후 만들어진 커밋되지 않은 변경사항을 확인할 수 있다.
+3. 브랜치 간 변경 내용은 점 연산자로 확인할 수 있다.
+```
+// two dot operator
+git diff branch1..branch2
+
+// three dot operator
+git diff branch1...branch3
+```
+4. 브랜치 간 특정 파일을 비교하려면 `git diff`의 세번째 인수로 파일 경로를 전달할 수 있다.
+`git diff master new_branch ./diff_test.txt`
+
