@@ -51,3 +51,27 @@ git diff branch1...branch3
 
 ## git reflog
 `git reset --soft`로 커밋을 되돌리다가 잘못 되돌렸을 경우 `git reflog`를 이용해 변경사항을 확인하고 다시 `git reset`을 이용해 기록된 `HEAD@{<n>}`으로 되돌아 갈 수 있다.
+
+## git branch
+`git branch` 명령을 사용하여 브랜치를 생성, 삭제, 이름 변경, 목록 보기 등을 할 수 있다. 
+
+```
+// 레포지토리에 있는 브랜치들을 살펴보기
+git branch // git branch --list와 동일하다.
+
+// <branch-name>이라는 이름의 branch 생성하기
+// * 주의: 해당 브랜치로 체크아웃 되지는 않음.
+git branch <branch-name>
+
+// <branch-name>이라는 이름의 branch 삭제하기
+// -d를 사용하면 안전하게 삭제 - merge되지 않은 변경사항들을 삭제하지 않음
+// -D는 force delete
+git branch -d <branch-name>
+git branch -D <branch-name>
+
+// 브랜치명 변경하기
+git branch -m <branch-name>
+
+// 리모트 브랜치 모두 보기
+git branch -a
+```
