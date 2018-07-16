@@ -30,3 +30,14 @@ git diff branch1...branch3
 4. 브랜치 간 특정 파일을 비교하려면 `git diff`의 세번째 인수로 파일 경로를 전달할 수 있다.
 `git diff master new_branch ./diff_test.txt`
 
+## git rebase
+오래된 커밋이나 여러 개의 커밋을 수정하기 위해 사용하며, 일련의 커밋들을 새로운 베이스 커밋으로 합칠 수 있다.
+따라서 프로젝트의 히스토리가 모두 없어진 것처럼 보이기도 한다.
+
+### git rebase -i(interactive)
+모든 커밋을 움직이는 대신 개별 커밋들을 변경할 수 있다.
+
+### git merge와 다른 점
+`git merge`는 항상 앞으로 이동하는(forward moving) 변경 기록이다. 반면 `git rebase`는 강력한 히스토리 재작성 기능을 가지고 있다.
+
+* [더 참고해 볼 내용](https://www.atlassian.com/git/tutorials/merging-vs-rebasing)
