@@ -75,3 +75,9 @@ git branch -m <branch-name>
 // 리모트 브랜치 모두 보기
 git branch -a
 ```
+
+브랜치간에는 전환하거나 분기 된 기록을 다시 함께 넣을 수는 없다 따라서 다음 명령들이 중요하다.
+
+### 함께 봐야하는 명령
+- `git checkout`
+- `git merge`
