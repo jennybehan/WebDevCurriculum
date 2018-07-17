@@ -1,12 +1,14 @@
 # Hello, git!
 
+## 스터디 노트
 ## git init
-* [참고](https://www.atlassian.com/git/tutorials/setting-up-a-repository/git-init)
+새로운 Git 저장소를 생성합니다. 버전없는 기존 프로젝트를 Git 저장소로 변환하거나 새로운 빈 저장소를 초기화시킵니다.
+
+- Git과 관련한 메타데이터들이 들어있는 `.git` 파일을 생성합니다.
+- HEAD 파일도 생성됩니다.
 
 ## git add
-### 새로 알게된 내용
-* `git add -p` 명령어: 해당 디렉토리에 있는 모든 변경사항을 다음 커밋을 위해 스테이징 시킨다.
-* 이때 새로운 파일은 해당되지 않나?
+* `git add -p`: 해당 디렉토리에 있는 파일 중 일부를 다음 커밋을 위해 스테이징 시킨다. (파일 내부에서만 사용)
 
 ## git commit
 ### 실습해보기
