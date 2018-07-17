@@ -76,8 +76,23 @@ git branch -m <branch-name>
 git branch -a
 ```
 
-브랜치간에는 전환하거나 분기 된 기록을 다시 함께 넣을 수는 없다 따라서 다음 명령들이 중요하다.
+## git remote
 
-### 함께 봐야하는 명령
-- `git checkout`
-- `git merge`
+- remote repo와 연결할 수 있는 두가지 방법: HTTP, SSH(Secure Shell) protocol
+- HTTP로 연결할 경우에는 커밋을 푸시할 수 없다.
+- 읽고 쓸 수 있는 권한에 접근하기 위해서는 SSH를 사용해야 한다.
+
+## *SSH key problem 
+- 참고 [SSH Keys for GitHub](https://jdblischak.github.io/2014-09-18-chicago/novice/git/05-sshkeys.html)
+- 새로운 브랜치를 따서 작업하던 중, 해당 내용을 푸시하려고 하면 푸시가 되지 않고 `git@github.com: Permission denied (publickey. fatal: Could not read from remote repository. Pleasemake sure you have the correct access rightsand therepository exists.`라는 오류가 떴음
+- `~/.ssh/id_rsa.pub` 에서 퍼블릭 키를 생성함.
+- 새로운 ssh key를 깃허브 계정 settings에서 생성하고 위에서 만든키를 넣음
+	- 이때 내 깃허브에 등록된 메일 주소를 맨 뒤에 추가함
+
+(정확히 어떤 문제였는지 더 파악해야 함. 헷갈렸던 링크: https://help.github.com/articles/error-permission-denied-publickey/)
+
+## 3 trees
+> The Commit Tree (HEAD), The Staging Index, and The Working Directory.
+- Working Directory: 작업공간
+- The Staging Index: 작업한 변경사항이 추가되는 영역
+- The Commit Tree (HEAD)
