@@ -140,8 +140,4 @@ width, height, margin 속성 적용 방식이 다르다.
 * `box-sizing: content-box`: 박스 너비는 width, height 속성에 margin, **border**, **padding** 속성이 포함된다. (기본)
 * `box-sizing: border-box`: 박스 너비는 width와 height 속성에 margin 속성이 포함된다.
 
-#### z-index
-
-숫자가 클수록 앞에 올라옴.
-
 * [참고자료](https://poiemaweb.com/css3-flexbox)
