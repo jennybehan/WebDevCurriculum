@@ -5,6 +5,267 @@
 		<link rel="stylesheet" href="./skeleton.css">
 	</head>
 	<body>
-		<!-- TODO: Quest 1에서 완성한 HTML을 바탕으로 필요한 부분을 수정해 보세요 -->
+		<div>
+			<header class="page-header flex-align">
+				<div id="wrapper">
+					<div class="header-wrapper">
+						<div class="header-list">
+							<a class="logo" href='https://github.com'>
+								<img src="./assets/mark-github.svg" />
+							</a>
+							<div class="search-wrapper">
+								<form class="search">
+									<div>This repository</div>
+									<input class="search-input" type="search" placeholder="Search">
+								</form>
+							</div>
+							<ul class="header-menu">
+								<li>
+									<a href="/pull-requests">Pull requests</a>
+								</li>
+								<li>
+									<a href="/issues">Issues</a>
+								</li>
+								<li>
+									<a href="/marketplace">Marketplace</a>
+								</li>
+								<li>
+									<a href="/explore">Explore</a>
+								</li>
+							</ul>
+						</div>
+						<ul class="header-noti">
+							<li class="header-noti-list">
+								<a class="noti-link" href="/notification">
+									<!-- svg 복사해서 넣어볼까 하다가, 그럼 svg의 경우 접근성 문제는 어떻게 해결하나 싶어서 그냥 다시 img로 돌림 -->
+									<img class="bell-noti" src="./assets/bell.svg" alt="notification">
+									<span class="noti-mark"></span>
+								</a>
+							</li>
+							<li >
+								<!-- 처음에는 위와 동일하게 a 태그로 작성했다가, 
+									이경우 의미있는 주소가 존재해서 해당 주소로 이동하는 동작이 아니라 
+									js를 통한 이벤트가 일어난다고 판단하여 button으로 바꿈 
+								-->
+								<button class="noti-link" type="button">
+									<img src="./assets/plus.svg" alt="more menues">
+								</button>
+							</li>
+							<li>
+								<button class="noti-link" type="button">
+									<img src="./assets/triangle-down.svg" alt="my profile">
+								</button>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</header>
+
+			<section class="main">
+				<header class="main-header">
+					<div id="wrapper">
+						<div class="main-header-wrapper flex-align">
+							<!-- 문서 전체의 대제목 -->
+							<h1>
+								<a class="repo-link" href="/KnowRe">Knowre</a>
+								/
+								<a herf="/WebDevCurriculum">WebDevCurriculum</a>
+							</h1>
+							<ul class="repo-menu">
+								<li class="button-wrapper">
+									<button class="button" type="button"> Unwatch &dtrif; </button>
+									<span>19</span>
+								</li>
+								<li class="button-wrapper">
+									<button class="button" type="button"> Star </button>
+									<span>113</span>
+								</li>
+								<li class="button-wrapper">
+									<button class="button" type="button"> Fork </button>
+									<span>106</span>
+								</li>
+							</ul>
+						</div>
+						<nav>
+							<ul class="nav-list">
+								<li class="nav-list-item">
+									<a href="/code">
+										Code
+									</a>
+								</li>
+								<li class="nav-list-item">
+									<a href="/issues">
+										Issues <span>0</span>
+									</a>
+								</li>
+								<li class="nav-list-item">
+									<a href="/pulls">
+										Pull requests <span>1</span>
+									</a>
+								</li>
+								<li class="nav-list-item">
+									<a href="/projects">
+										Projects <span>0</span>
+									</a>
+								</li>
+								<li class="nav-list-item">
+									<a href="/insights">
+										Insights
+									</a>
+								</li>
+							</ul>
+						</nav>
+					</div>
+				</header>
+					<section class="main-detail">
+						<div id="wrapper">
+							<h2>KnowRe web developement curriculum for noobs</h2>
+							<div class="main-detail-wrapper box">
+								<ul class="main-detail-menu">
+									<li>
+										<a href="/"><strong>44</strong> commits</a>
+									</li>
+									<li>
+										<a href="/"><strong>1</strong> branch</a>
+									</li>
+									<li>
+										<a href="/"><strong>0</strong> release</a>
+									</li>
+									<li>
+										<a href="/"><strong>2</strong> contributor</a>
+									</li>
+									<li>
+										<a href="">MIT</a>
+									</li>
+								</ul>
+								<div class="main-detail-bar flex-align">
+									<span class="red"></span>
+									<span class="yellow"></span>
+									<span class="blue"></span>
+								</div>
+							</div>
+						
+							<div class="repo-nav flex-align">
+								<div class="repo-nav-main">
+									<button class="button-wrapper button" type="button">Branch: master</button>
+									<a class="button-wrapper button" href="/createPull">New pull request</a>
+								</div>
+								<div class="repo-nav-sub flex">
+									<ul class="button-group button-wrapper flex">
+										<li>
+											<a class="button" href="/createFile">Create new file</a>
+										</li>
+										<li>
+											<a class="button" href="/uploadFile">Upload files</a>
+										</li>
+										<li>
+											<a class="button" href="/findFile">Find file</a>
+										</li>
+									</ul>
+									<button class="button button-clone" type="button">Clone or download</button>
+								</div>
+							</div>
+						
+							<section>
+								<div class="repo-main-board">
+									<div class="basic-info flex-align">
+										<div class="repo-name">
+											<a href="/KnowRe">
+												<!-- <img src="account.png" alt="account avatar"> -->
+												<span>KnowRe</span>
+											</a>
+											<span>Quest 02. added constraints</span>
+										</div>
+										<p class="commit-info">Latest commit 8a3080e 
+											<span class="date">on 7 Aug 2016</span>
+										</p>
+									</div>
+									<table class="repo-file-table box">
+										<tbody>
+											<tr>
+												<td class="repo-file-name">
+													<a href="/Part0.git/">Part 0.git/Quest 00. Hello, git</a>
+												</td>								
+												<td class="repo-file-commit">part 2 finished</td> 
+												<td class="repo-file-date">2 years ago</td>
+											</tr>
+											<tr>
+												<td class="repo-file-name">
+													<a href="/Part1.HTML&amp;CSS/">Part 1. HTML &amp; CSS</a>
+												</td>
+												<td class="repo-file-commit">Quest 02 added constraints</td> 
+												<td class="repo-file-date">2 years ago</td>
+											</tr>
+											<tr>
+												<td class="repo-file-name">
+													<a href="/README.md">README.md</a>
+												</td>
+												<td class="repo-file-commit">Fix: Removed advertisement</td> 
+												<td class="repo-file-date">2 years ago</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+								<section class="readme">
+									<h1 class="readme-title">README.md</h1>
+									<article class="box">
+										<h1>KnowRe web developement curriculum 2018</h1>
+									</article>
+								</section>
+							</section>
+						</div>
+					</section>
+				</section>
+
+				<div id="wrapper">
+					<footer class="flex-align">
+						<div class="flex-align">
+							<span>&copy; 2018 GitHub, Inc.</span>
+							<ul class="terms flex-align">
+								<li>
+									<a href="/">Terms</a>
+								</li>
+								<li>
+									<a href="/">Privacy</a>
+								</li>
+								<li>
+									<a href="/">Security</a>
+								</li>
+								<li>
+									<a href="/">Status</a>
+								</li>
+								<li>
+									<a href="/">Help</a>
+								</li>
+							</ul>
+						</div>
+						<div>
+							<a href=''>
+								<svg height="24" viewBox="0 0 16 16" version="1.1" width="24" aria-hidden="true"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path></svg>
+							</a>
+						</div>
+						<ul class="ex-links flex-align">
+							<li>
+								<a href="/">Contact GitHub</a>
+							</li>
+							<li>
+								<a href="/">API</a>
+							</li>
+							<li>
+								<a href="/">Training</a>
+							</li>
+							<li>
+								<a href="/">Shop</a>
+							</li>
+							<li>
+								<a href="/">Blog</a>
+							</li>
+							<li>
+								<a href="/">About</a>
+							</li>
+						</ul>
+					</footer>
+			</div>
+		</div>
 	</body>
 </html>
