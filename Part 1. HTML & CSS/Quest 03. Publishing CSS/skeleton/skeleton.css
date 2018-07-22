@@ -1,5 +1,8 @@
 * {
-	/* TODO: 어떤 코드가 들어가야 할까요? */
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+	color: #6b6b6b;
 }
 
 html {
@@ -7,7 +10,422 @@ html {
 }
 
 body {
-	/* TODO: 어떤 코드가 들어가야 할까요? */
+	min-width: 1024px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-size: 100%;
+	vertical-align: baseline;
+	background: transparent;
 }
 
-/* TODO: 또 어떤 코드들이 들어가야 할까요? */
+ol, ul, li {
+	list-style: none;
+	padding: 0;
+}
+
+a {
+	text-decoration: none;
+	color: #6b6b6b;
+	cursor: pointer;
+}
+
+strong {
+	color: #404040;
+}
+
+button {
+	border: none;
+    margin: 0;
+    padding: 0;
+	background: transparent;
+	cursor: pointer;
+}
+
+/* 공통요소 */
+
+/* layout */
+
+.flex {
+	display: flex;
+	align-items: center;
+}
+
+.flex-align {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+/* element */
+
+.box {
+	border: 1px solid #eee;
+	border-radius: 3px;
+}
+
+.button-wrapper {
+	margin-left: 10px;
+    border: 1px solid #ccc7c7a8;
+    border-radius: 4px;
+	padding: 5px 20px;
+}
+
+.button {
+	font-size: 14px;
+	font-weight: 500;
+	border-radius: 3px;
+}
+
+#wrapper {
+	width: 1024px;
+	margin: 0 auto;
+}
+
+header {
+	/* width: 100%; */
+}
+
+.page-header {
+	height: 80px;
+	background-color: #2c2b2b;
+	color: #ffffff;
+	padding: 20px 0;
+}
+
+.header-wrapper,
+.header-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.search-wrapper {
+	border-radius: 3px;
+    background-color: #404040;
+}
+
+.search {
+	display: flex;
+	align-items: center;
+	height: 100%;
+	line-height: 1.5;
+}
+
+.search > div {
+	padding: 4px 8px;
+    border-right: 1px solid #2c2b2b;
+    height: 100%;
+	color: #a5a4a4;
+}
+
+.search-wrapper .search .search-input {
+	background-color: transparent;
+	border: none;
+	outline: none;
+    border-radius: 0 3px 3px 0;
+	padding: 8px;
+	font-size: 14px;
+}
+
+.header-menu,
+.header-noti {
+	display: flex;
+	align-items: center;
+}
+
+.header-menu li {
+	color: #ffffff;
+}
+
+.page-header li > a {
+	margin: 0 10px;
+	color: #ffffff;
+}
+
+.noti-link:hover {
+	opacity: 0.7;
+}
+
+.header-noti img {
+	width: 20px;
+	margin: auto 10px;
+}
+
+.page-header .header-noti-list .noti-link {
+	display: inline-block;
+	position: relative;
+	margin: 0;
+}
+
+.noti-mark {
+	display: inline-block;
+	position: absolute;
+	top: 0;
+	right: 5px;
+	width: 12px;
+	height: 12px;
+	border-radius: 50%;
+	background-color: blue;
+}
+
+.main-header {
+	background-color: #fafbfc;
+	border-bottom: 1px solid #eee;
+}
+
+.main-header h1 {
+	font-size: 24px;
+}
+.main-header h1 > a {
+	color: #3232fc;
+}
+
+.main-header .repo-link {
+	font-weight: 400;
+}
+
+.main-header h1::before {
+	content: '';
+	display: inline-block;
+	width: 24px;
+	height: 24px;
+	background-image: url('./assets/repo.svg');
+	background-repeat: no-repeat;
+}
+
+.main-header-wrapper {
+	margin: 30px auto;
+	/* display: flex;
+    justify-content: space-between; */
+}
+
+.repo-menu {
+	display: flex;
+}
+
+.repo-menu .button-wrapper {
+	display: flex;
+	background-color: #eeeeee;
+	padding: 0;
+}
+
+.repo-menu .button {
+	padding: 5px 10px;
+}
+
+.repo-menu span {
+	display: inline-block;
+    font-size: 14px;
+	border-left: 1px solid #e3e3e3;
+	border-radius: 0 3px 3px 0;
+	background-color: #ffffff;
+	line-height: 1.5;
+	padding: 5px 10px;
+}
+
+.nav-list {
+	display: flex;
+}
+
+.nav-list-item {
+	padding: 8px 15px;
+	/* border-bottom: 1px solid #eee; */
+}
+
+.nav-list-item:first-child {
+	background-color: #fff;
+	border: solid transparent;
+	border-width: 3px 1px 1px;
+    border-radius: 3px 3px 0 0;
+	border-color: orangered #eee transparent;    
+}
+
+.main-detail {
+	margin: 30px auto 80px;
+}
+
+.main-detail h2 {
+	font-size: 18px;
+	font-weight: 400;
+}
+
+.main-detail-wrapper {
+	position: relative;
+	margin: 20px auto;
+}
+
+.main-detail-menu {
+	display: flex;
+    justify-content: space-around;
+	align-items: center;
+	padding: 18px 24px;
+}
+
+.main-detail-bar {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+}
+
+.red {
+	width: 50%;
+	height: 10px;
+	background-color: red;
+}
+
+.yellow {
+	width: 30%;
+	height: 10px;
+	background-color: yellow;
+}
+
+.blue {
+	width: 20%;
+	height: 10px;
+	background-color: blue;
+	box-shadow: #000000
+}
+
+.button-group li > a {
+	border-radius: 0;
+}
+
+.button-group {
+	margin: 0 8px 0 0;
+}
+
+.repo-nav-sub .button-wrapper {
+	padding: 0;
+}
+
+.repo-nav-main button,
+.repo-nav-main a {
+	margin-left: 4px;
+	background-color:#f4f4f4;
+}
+
+.repo-nav-main button {
+	margin: 0;
+}
+
+.button-group li {
+	padding: 4px 12px;
+	position: relative;
+	height: 100%;
+	background-color: #eeeeee;
+}
+
+.button-group li:after {
+	content: '';
+	display: block;
+	position: absolute;
+    top: 0;
+    right: 0;
+	width: 1px;
+	height: 100%;
+	background-color: #e3e3e3;
+}
+
+.button-group li:first-child {
+	border-radius: 3px 0 0 3px;
+}
+
+.button-group li:last-child {
+	border-radius: 0 3px 3px 0;
+}
+
+.button-group li:last-child:after {
+	width: 0;
+}
+
+.button-group .button {
+	border-radius: 0 3px 3px 0;
+    line-height: 1.5;
+}
+
+.button-clone {
+	background-color: #2fba2f;
+	padding: 6px 18px;
+	border: 1px solid #299729;
+	border-radius: 4px;
+	color: #ffffff;
+}
+
+section {
+	margin-top: 12px;
+}
+
+.repo-file-table {
+	width: 100%;
+	border-radius: 0 0 3px 3px
+}
+
+.repo-file-table td {
+	padding: 10px;
+	border-top: 1px solid #eee;
+}
+
+.repo-file-table tr:first-child td {
+	border: none;
+}
+
+.repo-file-date {
+	text-align: right;
+}
+
+.basic-info {
+	border: 1px solid #cee1f8;
+    border-radius: 3px 3px 0 0;
+    background-color: #ebf4ff;
+	padding: 10px;
+	font-size: 14px;
+}
+
+.repo-name a {
+	font-weight: 700;
+}
+
+.date {
+	color: #8f8f8f;
+	font-size: 16px;
+}
+
+.readme .box {
+	border: 1px solid #cfc9c9;
+	border-top: 1px solid transparent;
+	border-radius: 0 0 3px 3px;
+	padding: 40px;
+}
+
+.readme-title {
+	border: 1px solid #cfc9c9;
+    border-radius: 2px 2px 0 0;
+    background-color: #f4f4f4;
+    padding: 10px;
+    font-size: 14px;
+}
+
+article h1 {
+	font-size: 36px;
+	color: #000000;
+	padding-bottom: 10px;
+    border-bottom: 1px solid #d9d9d9;
+}
+
+footer {
+	border-top: 1px solid #d9d9d9;
+	padding: 40px 0;
+}
+
+footer li {
+	margin-left: 14px;
+}
+
+footer ul {
+	font-size: 14px;
+}
+
+footer a {
+	color: #5881e5;
+}
