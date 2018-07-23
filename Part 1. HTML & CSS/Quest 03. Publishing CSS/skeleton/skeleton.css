@@ -2,21 +2,16 @@
 	box-sizing: border-box;
 	margin: 0;
 	padding: 0;
-	color: #6b6b6b;
 }
 
 html {
-	/* TODO: 어떤 코드가 들어가야 할까요? */
+	height: 100%;
+	font-family: sans-serif;
 }
 
 body {
-	min-width: 1024px;
-	margin: 0;
-	padding: 0;
-	border: 0;
-	outline: 0;
-	font-size: 100%;
-	vertical-align: baseline;
+	color: #6b6b6b;
+	height: 100%;
 	background: transparent;
 }
 
@@ -43,8 +38,7 @@ button {
 	cursor: pointer;
 }
 
-/* 공통요소 */
-
+/* 재사용 클래스 */
 /* layout */
 
 .flex {
@@ -100,9 +94,14 @@ header {
 	justify-content: space-between;
 }
 
+.logo svg {
+	fill: #ffffff;
+}
+
 .search-wrapper {
 	border-radius: 3px;
-    background-color: #404040;
+	background-color: #404040;
+	margin-left: 15px;
 }
 
 .search {
@@ -112,12 +111,16 @@ header {
 	line-height: 1.5;
 }
 
-.search > div {
-	padding: 4px 8px;
+.search div {
+	padding: 8px 10px 0 10px;
     border-right: 1px solid #2c2b2b;
     height: 100%;
-	color: #a5a4a4;
 }
+
+.search span {
+	color: #ffffffc9;
+	font-weight: 500;
+} 
 
 .search-wrapper .search .search-input {
 	background-color: transparent;
@@ -134,50 +137,72 @@ header {
 	align-items: center;
 }
 
-.header-menu li {
-	color: #ffffff;
+.header-noti-list {
+	margin-left: 10px;
 }
 
 .page-header li > a {
 	margin: 0 10px;
-	color: #ffffff;
+	color: #d1cfcf;
 }
 
 .noti-link:hover {
 	opacity: 0.7;
 }
 
-.header-noti img {
+.noti-link svg,
+.octicon-repo,
+.nav-list-item svg {
+	fill: #d1cfcf;
+}
+
+.octicon-plus,
+.octicon-bell {
 	width: 20px;
-	margin: auto 10px;
+	height: 20px;
+}
+
+.octicon-triangle-down {
+	width: 10px;
+	height: 10px;
+	line-height: 2;
+	margin: 5px 2px;
+}
+
+.profile-pic {
+	width: 20px;
+	height: 20px;
+	border-radius: 3px;
+	background-color: #d1cfcf;
 }
 
 .page-header .header-noti-list .noti-link {
-	display: inline-block;
+	display: flex;
 	position: relative;
-	margin: 0;
 }
 
 .noti-mark {
 	display: inline-block;
-	position: absolute;
-	top: 0;
-	right: 5px;
-	width: 12px;
-	height: 12px;
-	border-radius: 50%;
-	background-color: blue;
+    position: absolute;
+    top: -7px;
+    right: -4px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: linear-gradient(#1919e8, #5e4ee5);
+    border: 2px solid #2c2b2b;
 }
 
 .main-header {
 	background-color: #fafbfc;
-	border-bottom: 1px solid #eee;
+	position: relative;
 }
 
 .main-header h1 {
 	font-size: 24px;
 }
-.main-header h1 > a {
+.main-header h1 > a,
+.file-link {
 	color: #3232fc;
 }
 
@@ -185,19 +210,8 @@ header {
 	font-weight: 400;
 }
 
-.main-header h1::before {
-	content: '';
-	display: inline-block;
-	width: 24px;
-	height: 24px;
-	background-image: url('./assets/repo.svg');
-	background-repeat: no-repeat;
-}
-
 .main-header-wrapper {
 	margin: 30px auto;
-	/* display: flex;
-    justify-content: space-between; */
 }
 
 .repo-menu {
@@ -228,15 +242,57 @@ header {
 	display: flex;
 }
 
-.nav-list-item {
-	padding: 8px 15px;
-	/* border-bottom: 1px solid #eee; */
+.nav-list::before,
+.nav-list::after {
+	content: '';
+    display: inline-block;
+    height: 1px;
+    background-color: #eeeeee;
+    position: absolute;
+    bottom: 0;
 }
 
-.nav-list-item:first-child {
-	background-color: #fff;
-	border: solid transparent;
-	border-width: 3px 1px 1px;
+.nav-list::before {
+	left: 0;
+	width: calc((100% - 1024px)/2);
+}
+
+.nav-list::after {
+	right: 0;
+	width: 50%;
+}
+
+.nav-list-item {
+	padding: 8px 15px;
+	display: flex;
+}
+
+.nav-list-item svg {
+	margin-right: 5px;
+}
+
+.nav-list-item .octicon-code {
+	fill: #404040;
+}
+
+.circle-info {
+	display: inline-block;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	text-align: center;
+	line-height: 1.5;
+	background-color: #e3e3e3;
+}
+
+.nav-list-item {
+	border-bottom: 1px solid #eeeeee;
+}
+
+.nav-list-item:first-child {	
+	background-color: #ffffff;
+	border: 1px solid transparent;
+	border-width: 3px 1px 1px 1px;
     border-radius: 3px 3px 0 0;
 	border-color: orangered #eee transparent;    
 }
@@ -260,6 +316,10 @@ header {
     justify-content: space-around;
 	align-items: center;
 	padding: 18px 24px;
+}
+
+.main-detail-menu li svg {
+	padding-top: 3px;
 }
 
 .main-detail-bar {
@@ -352,6 +412,11 @@ header {
 	color: #ffffff;
 }
 
+.button-clone .octicon-triangle-down {
+	fill: #ffffff;
+	margin: 0;
+}
+
 section {
 	margin-top: 12px;
 }
@@ -374,12 +439,27 @@ section {
 	text-align: right;
 }
 
+.octicon-file-directory {
+	fill: #81a0c7;
+}
+
+.octicon-file {
+	fill: #8f8f8f;
+}
+
 .basic-info {
 	border: 1px solid #cee1f8;
     border-radius: 3px 3px 0 0;
     background-color: #ebf4ff;
 	padding: 10px;
 	font-size: 14px;
+}
+
+.repo-name {
+	display: flex;
+	align-items: center;
+	width: 25%;
+	justify-content: space-around;
 }
 
 .repo-name a {
@@ -403,7 +483,8 @@ section {
     border-radius: 2px 2px 0 0;
     background-color: #f4f4f4;
     padding: 10px;
-    font-size: 14px;
+	font-size: 14px;
+	color: #404040;
 }
 
 article h1 {
