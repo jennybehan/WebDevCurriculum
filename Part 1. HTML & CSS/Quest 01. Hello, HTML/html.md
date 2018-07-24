@@ -9,6 +9,7 @@
 | 1997.12   | HTML4.0| W3C   | HTML 표준안 권고
 | 1998.4    | HTML4.0| W3C   | HTML 표준안의 공식적 표준화, IE에서 지원
 | 1999      | HTML4.0| W3C   | HTML 표준 제정(2000년 이후로 업데이트 되지 않음)
+| 1999.12.24 | HTML4.01| W3C  | DTD, 스타일시트, 스크립트, frame, table, form 등
 | 2002-2008 | XHTML2.0| W3C   | 2009년 개발 중단
 | 2004      | -     | WHATWG | W3C에 제안한 내용들을 반려당하자 웹 브라우저 업체들(Mozilla, Opera 등)이 브라우저 호환성을 위해 W3C와 별도로 웹표준을 만들기 위해 워킹그룹(WHATWG)을 만듬, Web Application 1.0을 제안
 | 2008.1    | HTML5 | WHATWG | 공식 작업 초안을 발표
@@ -24,6 +25,8 @@
 * 멀티미디어: HTML5에서는 다양한 멀티미디어 기능이 추가되어 (플래시 등의 프로그램 불필요) 부가적인 프로그램 없이 브라우저 기능만으로 가능한 일들이 많아졌다.
 
 * 시멘틱 태그: 시멘틱한 마크업 태그(`<header>`, `<nav>`, `<section>`, `<article>`, `<aside>`, `<footer>` 등) 추가, 문서 선언(DTD) 간소화(`<!DOCTYPE html>`), CSS로 대체할 수 있는 태그 삭제
+
+> DTD: 문서 유형 선언(Document Type Definition). 여러가지 HTML 문서 형식 중에서 해당 문서에 맞는 HTML의 버전과 종류를 명시한다. 즉 문서 안에 작성된 마크업 언어가 어떤 표준을 따르고 있는 지 브라우저에게 알려 브라우저가 문서를 해석하고 출력하는 것을 원활하게 한다. [참고](https://github.com/nhnent/fe.javascript/wiki/DTD)
 
 * CSS3 스타일 지원
 
@@ -50,6 +53,8 @@ CSS의 경우 선택자나 주요 기능이 제대로 지원되지 않고 UTF-8 
 ### `<section>`과 `<div>`, `<header>`, `<footer>`, `<article>` 엘리먼트의 차이점은 무엇인가요?
 
 1. `<div>`를 제외한 다른 엘리먼트들은 모두 HTML5에서 도입된 섹션 요소(Sectioning content, outlining 알고리즘에 따른 구조적인 문서 구성)입니다. `<div>`는 단순히 문서의 공간을 분할하고 내용을 감싸기 위한 컨테이너 역할을 하는 반면, 섹션 요소들은 각각의 엘리먼트가 감싸고 있는 영역에 그 자체로 의미를 부여합니다. 따라서 섹셔닝 컨텐트들을 통해 HTML4까지 암묵적으로 문서의 구조를 만들었던 것보다 훨씬 의미론적으로 문서 구조를 표현할 수 있게 되었습니다.
+
+- 기계가 이해하기에도 용이
 
 * [참고링크 1](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Using_HTML_sections_and_outlines)
 * [참고링크 2](https://www.w3.org/TR/html5/dom.html#sectioning-content-2)
@@ -133,3 +138,4 @@ CSS의 경우 선택자나 주요 기능이 제대로 지원되지 않고 UTF-8 
 * [출처](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button)
 
 Q. svg로 만들어진 아이콘만 있는 버튼의 경우 해당 내용이 무슨 버튼인 지 알 수 없으므로 `<a>` 요소를 쓰는 게 나을까?
+A. svg를 포함해 모든 요소에 `alt` 값을 사용할 수 있으므로 쓰면 된다.
