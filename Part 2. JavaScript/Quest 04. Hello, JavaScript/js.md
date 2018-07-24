@@ -2,14 +2,15 @@
 
 ### 자바스크립트는 버전별로 어떻게 변화하고 발전해 왔을까요?
 
+전반적으로 자바스크립트의 초기 설계 오류와 혼란스러운 부분들을 보완하기 위한 기능들이 추가되는 방향.
+
 #### ES5
 
-- 배열과 관련 메소드 추가: `forEach`, `map`, `filter`, `reduce`, `some`, `every` 등 순환, 반복 작업을 위한 메소드들
-- 객체 관련 메소드 추가: `Object.create()`, `Object.defineProperty()`, `Object.freeze()`, `Object.assign()`, `Object.keys()`, getter/setter 등
+- 배열과 관련 메소드 추가: `forEach`, `map`, `filter`, `reduce`, `some`, `every` 등 순환, 반복 작업을 위한 메소드들 -> 가독성을 높이고 중복 코드와 버그를 줄여준다.
+- 객체 관련 메소드 추가: `Object.create()`, `Object.defineProperty()`, `Object.freeze()`, `Object.assign()`, `Object.keys()`, getter/setter 등 -> 객체의 프로퍼티 설정이 가능.
 - strict 모드 추가: 선언되지 않은 변수에 할당하면 참조에러(ReferenceError)가 생김. non-strict 모드에서는 이 경우 전역 변수가 생성되었음. (string의 length 같은) 읽기 전용 프로퍼티를 변경하는 것은 타입에러(TypeError)를 일으킴. non-strict 모드에서는 아무런 영향 없음.
 - `bind()` 메서드
-- lexical 환경
-- JSON
+- JSON 지원
 
 #### ES6**
 
@@ -31,13 +32,18 @@
 - 비구조화 할당: rest 파라미터, spread 연산자, default 파라미터
 - 템플릿 리터럴
 
+#### ES2016
+
+- Array: `Array.includes` - 배열에 해당 요소가 들어있는지 확인
+- 제곱연산자 `**` 등장
+
 #### ES2017
 
 - async/await 함수: Promise.prototype.then의 체이닝 대신 사용
 - Generator 객체: 취소 가능한 비동기 동작 구현
 - Object: `Object.values(obj)`, `Object.keys(obj)` 등 - 객체의 enumerable한 속성값들만 배열로 만들어준다.
 
-* [참고: ](https://gist.github.com/marocchino/841e2ff62f59f420f9d9)
+* [참고](https://gist.github.com/marocchino/841e2ff62f59f420f9d9)
 
 #### 자바스크립트의 버전들을 가리키는 ES5, ES6, ES2016, ES2017 등은 무엇을 이야기할까요?
 
