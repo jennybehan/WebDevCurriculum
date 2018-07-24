@@ -16,8 +16,8 @@ body {
 .main {
 	background-color: skyblue;
 	height: 100%;
-	margin-left: 200px;
-	margin-right: 300px;
+	left: 200px;
+	right: 300px;
 	position: absolute;
 	top: 0;
 }

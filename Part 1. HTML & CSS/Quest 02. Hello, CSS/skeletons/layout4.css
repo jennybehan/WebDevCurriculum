@@ -11,7 +11,9 @@ body {
 .contents {
 	position: relative;
 	display: flex;
+	height: 100%;
 	flex-wrap: nowrap;
+	align-items: stretch;
 }
 
 .main {
