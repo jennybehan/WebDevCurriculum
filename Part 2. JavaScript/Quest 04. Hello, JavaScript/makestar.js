@@ -1,4 +1,5 @@
-var input = window.prompt('star input');
+// input에 대한 typechecking 혹은 형변환 필요
+var input = Number(window.prompt('star input'));
 var star = '';
 
 if (input) {
