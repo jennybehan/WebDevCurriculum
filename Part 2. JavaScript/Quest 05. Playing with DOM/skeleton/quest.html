@@ -34,7 +34,12 @@
 
 		<script>
 			let row1Squares = document.querySelectorAll('.row1 .square');
+			row1Squares.forEach(() => {
+				;
+			})
 			for(let node of row1Squares) {
+			// row1Squares.forEach(node => {
+
 				function toggleYellow() {
 					if (node.attributes.style && node.attributes.style.value === 'background-color: yellow') {
 						node.setAttribute('style', 'background-color: white');
@@ -43,7 +48,21 @@
 					}
 				}
 				node.onclick = toggleYellow;
-			}
+
+				// 만약 var를 쓰면서도 동일한 결과를 내려면 함수로 한번 더 감싸준다.
+				// 함수로 한번 더 감싸주는 경우 - 중첩 함수는 유효범위에 있는 변수에 접근할 수 있지만 그 외부에서는 접근이 불가능하다.
+				// 매번 새로운 변수 node가 설정되므로 let을 사용한 것과 동일한 결과가 나타난다.
+				// (function(node) {
+				// 	node.onclick = function () {
+				// 		if (node.attributes.style && node.attributes.style.value === 'background-color: yellow') {
+				// 			node.setAttribute('style', 'background-color: white');
+				// 		} else {
+				// 			node.setAttribute('style', 'background-color: yellow');
+				// 		}
+				// 	}
+				// })(node);
+			// })
+		}
 			let row2Squares = document.querySelectorAll('.row2 .square');
 			for(let node of row2Squares) {
 				function toggleClass() {
