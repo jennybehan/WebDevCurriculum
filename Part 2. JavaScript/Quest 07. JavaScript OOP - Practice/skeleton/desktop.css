@@ -1,1 +1,17 @@
-/* TODO: 자유롭게 바탕화면 시스템의 CSS를 만들어 보세요! */
+.screen {
+    background-color: rgb(19.7%, 77.7%, 77.7%);
+}
+
+.icon {
+    position: relative;
+    width: 40px;
+    height: 30px;
+    background: linear-gradient(#ff9f9f, #e57373);
+}
+
+.icon:hover {
+    width: 40px;
+    height: 30px;
+    background: linear-gradient(#ff9f9f, #e57373);
+    cursor: pointer;
+}
