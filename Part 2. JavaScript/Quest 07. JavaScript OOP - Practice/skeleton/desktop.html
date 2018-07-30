@@ -10,10 +10,8 @@
 		</section>
 
 		<script>
-			let myDesktop = new Desktop(
-				window.outerWidth, window.outerHeight, true, 2, 1
-			);
-			myDesktop.getScreen();
+			let myDesktop = new Desktop(window.outerWidth, window.outerHeight);
+			myDesktop.initializeScreen();
 		</script>
 	</body>
 </html>
