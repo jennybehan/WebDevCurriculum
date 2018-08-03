@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="./style.css">
+    <script src="./project.js"></script>
+    <title>Project</title>
+</head>
+<body>
+    <header>
+        <h1 id="greetings">Hi!</h1>
+    </header>
+    <section>
+        <div class="picture-frame"></div>
+        <div class="buttons">
+            <button class="newColor">color</button>
+            <button class="newPictures">see more</button>
+            <button class="newGreetings">new greetings</button>
+        </div>
+        <div class="time-box">
+            <div class="date">
+                <p id="year"></p>
+                <p id="month"></p>
+                <p id="date"></p>
+            </div>
+            <div class="time">
+                <p id="hour"></p>
+                <p id="minute"></p>
+                <p id="second"></p>
+            </div>
+        </div>
+    </section>
+    <footer>
+        <p>
+            motivated by
+            <a href="http://tabbycats.club/">Tabby cats</a>
+        </p>
+    </footer>
+    <script>
+        const project = new Window();
+        project.initialize();
+    </script>
+</body>
+</html>
