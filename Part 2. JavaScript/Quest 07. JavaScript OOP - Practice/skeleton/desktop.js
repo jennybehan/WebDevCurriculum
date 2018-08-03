@@ -2,8 +2,8 @@ function dragFunc(e) {
 	movePosition(e.pageX, e.pageY);
 
 	function movePosition(pageX, pageY) {
-		e.target.style.left = pageX - e.target.offsetWidth / 2 + 'px';
-		e.target.style.top = pageY - e.target.offsetHeight / 2 + 'px';
+		e.target.style.left = pageX - e.offsetX + 'px';
+		e.target.style.top = pageY - e.offsetY + 'px';
 	}
 
 	function onMouseMove(e) {
@@ -18,46 +18,33 @@ function dragFunc(e) {
 	};
 }
 
-function makeIcons(x, y, num) {
-	for(var i = 0; i <= num; i++) {
-		var iconList = [];
-		iconList[i] = new Icon(x, y, num);
-	}
-	return iconList;
+function makeRandom(param) {
+	return Math.floor(Math.random() * param/2)
 }
 
 class Desktop {
-	// 배경화면
-	constructor(width, height, iconNum, folderNum) {
-		this._width = width;
-		this._height = height;
+	constructor(iconNum, folderNum) {
 		this._icon = iconNum;
 		this._folder = folderNum;
 		this.section = document.querySelector('section');
-		this.screen = document.createElement('div');
-
-		this.randomX = this.makeRandom(width);
-		this.randomY = this.makeRandom(height);
-
-		this.setIcon = new Icon(this.randomX, this.randomY, iconNum);
-		this.setFolder = new Folder(200, 300);
 	}
 
 	makeRandom(param) {
-		return Math.floor(Math.random() * param/2)
-	}
-
-	initializeScreen() {
-		// 기본 바탕화면 표시
-		this.width = this._width;
-		this.height = this._height;
-		this.screen.setAttribute('class', 'screen')
-		this.screen.setAttribute('style', `width: ${this.width}px; height: ${this.height}px;`)
-		this.section.append(this.screen);
+		return Math.floor(Math.random() * param);
+	};
 		
-		this.setIcon.initializeIcon();
-		this.setIcon.initializeIcon();
-		this.setFolder.initializeFolder();
+	initializeScreen() {
+		var icons = document.querySelectorAll('.icon'); // icon은 두개야..
+		icons.forEach(el => {
+			return new Icon(makeRandom(document.body.clientWidth), makeRandom(document.body.clientHeight))
+		});
+		// icons.forEach(el => {
+		// 	return el.initializeIcon();
+		// })
+
+		var folder = document.querySelector('.folder');
+		folder = new Folder(makeRandom(document.body.clientWidth), makeRandom(document.body.clientHeight));
+		folder.initializeFolder();
 	}
 };
 
@@ -65,17 +52,16 @@ class Icon {
 	constructor(x, y) {
 		this._x = x;
 		this._y = y;
+		this.desktop = document.querySelector('.desktop');
 	}
 	
 	initializeIcon() {
-		this.icon = document.createElement('div');
-		this.icon.setAttribute('class', 'icon');
-		this.icon.setAttribute('style', `left: ${this._x}px; top: ${this._y}px`);
-		
-		var screen = document.querySelector('.screen');
-		screen.append(this.icon);
-
-		this.icon.onmousedown = dragFunc;
+		var icons = this.desktop.querySelectorAll('.icon');
+		icons.forEach(el => {
+			el.style.top = this._x + 'px';
+			el.style.left = this._y + 'px';
+			el.addEventListener('mousedown', dragFunc);
+		})
 	}
 };
 
@@ -87,25 +73,14 @@ class Folder extends Icon {
 	}
 
 	initializeFolder() {
-		this.folder = document.createElement('div');
-		this.folder.setAttribute('class', 'icon folder');
-		this.folder.setAttribute('style', `left: ${this._x}px; top: ${this._y}px`);
-		
-		var screen = document.querySelector('.screen');
-		screen.append(this.folder);
-
-		this.folder.onmousedown = dragFunc;
-		this.folder.ondblclick = this.openWindow;
+		console.log(this)
+		var folder = this.desktop.querySelector('.folder');
+		folder.style.top = this._x + 'px';
+		folder.style.left = this._y + 'px';
+		folder.addEventListener('mousedown', dragFunc);
 	}
 
 	openWindow() {
-		const window = document.createElement('div');
-		window.setAttribute('class', 'window');
-
-		var screen = document.querySelector('.screen');
-		screen.append(window);
-		window.textContent = 'window';
-		window.onmousedown = dragFunc;
 	}
 
 };
@@ -117,11 +92,6 @@ class Window {
 	}
 
 	initializeWindow() {
-		this.window = document.createElement('div');
-		this.window.setAttribute('class', 'window');
-		this.window.setAttribute('style', `left: ${this._x}px; top: ${this._y}px`);
-
-		var screen = document.querySelector('.screen');
-		screen.append(this.window);
+		
 	}
 };
