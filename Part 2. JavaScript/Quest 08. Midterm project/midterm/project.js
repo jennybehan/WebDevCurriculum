@@ -39,12 +39,22 @@ const pictureListDog = [
     'dog_06.jpg',
     'dog_07.jpg',
     'dog_08.jpg',
+    'dog_09.jpg',
+    'dog_10.jpg',
 ]
 
 const pictureDummy = [
     pictureListCat,
     pictureListDog
 ]
+
+const textList = [
+    'Welcome!',
+    '패스트파이브가 싫어요',
+    '귀여운 댕댕이',
+    '오늘은 신나는 금요일!',
+    'Knowre'
+];
 
 function changeColor() {
     const colorList = [
@@ -59,7 +69,7 @@ function changeColor() {
 }
 
 function makeRandom(param) {
-    Math.floor(Math.random() * param.length)
+    return Math.floor(Math.random() * param.length)
 }
 
 class Window {
@@ -69,12 +79,13 @@ class Window {
     }
     
     initialize() {
+        const dummy = new Dummy();
         const text = new Text();
         const time = new Time();
-        const dummy = new Dummy();
 
-        time.initializeTime();
         dummy.initializeDummy();
+        text.initializeText();
+        time.initializeTime();
     }
     
     changeBackground() {
@@ -87,35 +98,52 @@ class Dummy {
     constructor() {
         this.newPictureBtn = document.querySelector('.newPictures');
         this.newPictureBtn.addEventListener('click', this.changeDummy.bind(this));
-        this.pickedDummy = pictureDummy[Math.floor(Math.random() * pictureDummy.length)];
+        this.picture = document.querySelector('.picture-frame');
     }
-
+    
     initializeDummy() {
-        const picture = new Picture();
-        picture.initializePicture(this.pickedDummy);
+        const pickedDummy = pictureDummy[makeRandom(pictureDummy)];
+        const picture = new Picture(pickedDummy);
+        picture.initializePicture();
     }
 
     changeDummy() {
         this.initializeDummy();
+        const tooltip = new Tooltip();
+        tooltip.initializeTooltip();
     }
 }
 
-class Picture {
+class Tooltip {
     constructor() {
-        this.picture = document.querySelector('.picture-frame');
-        this.picture.addEventListener('click', this.changePicture.bind(this));
-        this.dummy = pictureDummy[Math.floor(Math.random() * pictureDummy.length)]
+        this.tooltip = document.querySelector('.tooltip');
+        this.controlTooltip = setTimeout(this.removeTooltip.bind(this), 3000);
+    }
+    
+    initializeTooltip() {
+        this.tooltip.classList.add('visible');
     }
 
-    initializePicture(dummy) {
-        const pickedPicture = dummy[Math.floor(Math.random() * dummy.length)];
+    removeTooltip() {
+        this.tooltip.classList.remove('visible');
+    }
+
+}
+
+class Picture {
+    constructor(pickedDummy) {
+        this.picture = document.querySelector('.picture-frame');
+        this.picture.addEventListener('click', this.changePicture.bind(this));
+        this.pickedDummy = pickedDummy;
+    }
+
+    initializePicture() {
+        const pickedPicture = this.pickedDummy[makeRandom(this.pickedDummy)];
         this.picture.setAttribute('style', `background-image: url('./assets/${pickedPicture}')`)
     }
     
     changePicture() {
-        const pickedDummy = this.dummy;
-        const pickedPicture = pickedDummy[Math.floor(Math.random() * pickedDummy.length)];
-        this.picture.setAttribute('style', `background-image: url('./assets/${pickedPicture}')`)
+        this.initializePicture();
     }
 }
 
@@ -126,16 +154,13 @@ class Text {
         this.mainText = document.querySelector('h1');
     }
 
-    changeText() {
-        const textList = [
-            'Welcome!',
-            '패스트파이브가 싫어요',
-            'ㅠㅠ',
-            '오늘은 신나는 금요일!',
-            'Knowre'
-        ];
+    initializeText() {
+        const initialText = textList[makeRandom(textList)];
+        this.mainText.textContent = initialText;
+    }
 
-        const randomText = textList[Math.floor(Math.random() * textList.length)];
+    changeText() {
+        const randomText = textList[makeRandom(textList)];
         this.mainText.textContent = randomText;
         this.mainText.setAttribute('style', `color: ${changeColor()}`);
     }
@@ -151,7 +176,7 @@ class Time {
     
     initializeTime() {
         const now = new Date();
-
+        
         const year = now.getFullYear();
         const month = now.getMonth() + 1;
         const date = now.getDate();
@@ -160,26 +185,23 @@ class Time {
         let seconds = now.getSeconds();
         let session = "오전";
         
-        if (hour == 0) {
+        if (hour === 0) {
             hour = 12;
         } else if (hour > 12) {
             hour = hour - 12;
             session = "오후";
-        } else return;
+        } else if (hour < 10) {
+            hour = "0" + hour;
+        }
         
-        hour = (hour < 10) ? "0" + hour : hour;
         minute = (minute < 10) ? "0" + minute : minute;
         seconds = (seconds < 10) ? "0" + seconds : seconds;
         
         let timeNow = session + " " + hour + ":" + minute + ":" + seconds
         let today = year + '년 ' + month + '월 ' + date + '일';
-
+        
         this.today.textContent = today;
         this.timeNow.textContent = timeNow;
         this.setTime;
     }
-    
-    // setTime() {
-    //     setInterval(this.initializeTime.bind(this), 1000);
-    // }
 }
