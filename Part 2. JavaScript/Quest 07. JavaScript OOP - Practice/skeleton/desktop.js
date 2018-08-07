@@ -27,11 +27,11 @@ class Desktop {
 		this._desktop = document.querySelector('.desktop');
 		this._icons = this._desktop.querySelectorAll('.icon');
 		this._folder = this._desktop.querySelector('.folder');
+		// this._iconNum = this.makeIcon(iconNum);
 	}
 
 	// [TO DO]
 	// 넘겨받는 숫자에 따라 icon 생성
-	
 	// makeIcon(num) {
 	// 	for(var i = 0; i <= num; i++) {
 	// 		var icon = document.createElement('div');
@@ -39,10 +39,8 @@ class Desktop {
 	// 		this._desktop.append(icon);
 	// 	}
 	// }
-	
+
 	initializeScreen(iconNum) {
-		// this.makeIcon(iconNum);
-		
 		this._icons.forEach(el => {
 			const icon = new Icon(this._desktop);
 			return icon.initializeIcon(this._icons);
