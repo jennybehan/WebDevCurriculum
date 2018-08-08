@@ -79,15 +79,18 @@ class Window {
     }
     
     initialize() {
-        const dummy = new Dummy();
-        const text = new Text();
-        const time = new Time();
+        this.dummy = new Dummy();
+        this.text = new Text();
+        this.time = new Time();
+        // 자식 요소를 멤버변수로 가지고 있도록 
+        // - 디버깅 할 때도 편리하고 구조상으로도 Window가 각각의 요소를 가지고 있는 게 맞음
 
-        dummy.initializeDummy();
-        text.initializeText();
-        time.initializeTime();
+        this.dummy.initializeDummy();
+        this.text.initializeText();
+        this.time.initializeTime();
     }
     
+    // 아예 bg 부분을 클래스로 뺄 수 있음 
     changeBackground() {
         const background = document.querySelector('body');
         background.setAttribute('style', `background-color: ${changeColor()}`);
@@ -99,27 +102,21 @@ class Dummy {
         this.newPictureBtn = document.querySelector('.newPictures');
         this.newPictureBtn.addEventListener('click', this.changeDummy.bind(this));
         this.picture = document.querySelector('.picture-frame');
+        this.tooltip = document.querySelector('.tooltip');
     }
     
     initializeDummy() {
         const pickedDummy = pictureDummy[makeRandom(pictureDummy)];
-        const picture = new Picture(pickedDummy);
-        picture.initializePicture();
-    }
-
-    changeDummy() {
-        this.initializeDummy();
-        const tooltip = new Tooltip();
-        tooltip.initializeTooltip();
-    }
-}
-
-class Tooltip {
-    constructor() {
-        this.tooltip = document.querySelector('.tooltip');
-        this.controlTooltip = setTimeout(this.removeTooltip.bind(this), 3000);
+        this.picture = new Picture(pickedDummy);
+        this.picture.initializePicture();
     }
     
+    changeDummy() {
+        this.initializeTooltip();
+        this.initializeDummy();
+        setTimeout(this.removeTooltip.bind(this), 3000);
+    }
+
     initializeTooltip() {
         this.tooltip.classList.add('visible');
     }
@@ -127,7 +124,7 @@ class Tooltip {
     removeTooltip() {
         this.tooltip.classList.remove('visible');
     }
-
+    
 }
 
 class Picture {
