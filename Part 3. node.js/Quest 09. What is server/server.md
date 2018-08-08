@@ -115,9 +115,44 @@ traceroute to www.google.com (108.177.125.104), 64 hops max, 52 byte packets
 * Wireshark를 통해 www.google.com 으로 요청을 날렸을 떄 어떤 TCP 패킷이 오가는지 확인해 보세요
     * TCP 패킷을 주고받는 과정은 어떻게 되나요?
     * 각각의 패킷에 어떤 정보들이 담겨 있나요?
-* telnet 명령을 통해 http://www.google.com/ URL에 HTTP 요청을 날려 보세요.
+* telnet 명령을 통해 www.google.com URL에 HTTP 요청을 날려 보세요.
+
+    ```
+    brew install telnet
+    telnet http://www.google.com/ 80
+    GET /calendar HTTP/1.0
+    HOST: www.google.com
+    ```
     * 어떤 헤더들이 있나요?
+    ```
+    HTTP/1.0 301 Moved Permanently
+    Location: https://calendar.google.com/calendar
+    Content-Type: text/html; charset=UTF-8
+    Date: Wed, 08 Aug 2018 08:37:26 GMT
+    Expires: Wed, 08 Aug 2018 08:37:26 GMT
+    Cache-Control: private, max-age=0
+    X-Content-Type-Options: nosniff
+    X-Frame-Options: SAMEORIGIN
+    X-XSS-Protection: 1; mode=block
+    Server: GSE
+    Accept-Ranges: none
+    Vary: Accept-Encoding
+    ```
+
     * 그 헤더들은 어떤 역할을 하나요?
+
+      * 시작줄: Status line. HTTP 버전, 상태코드, 응답구문으로 이루어져 있으며 실행해야 할 요청 혹은 요청에 대한 성공 혹은 실패를 나타냄
+      * Location: 서버의 응답이 컨텐츠가 다른 곳으로 옮겨졌다는 의미인 301이므로 Location 헤더를 통해 해당 URL을 지정해 줌(301, 302 일때만 볼 수 있는 헤더)
+      * Content-type: 서버가 보내는 컨텐츠의 형식을 표현. 브라우저가 이 형식에 따라 적절하게 처리할 수 있다. charset은 컨텐츠의 인코딩을 지정한다. 인코딩이 제대로 되어있지 않으면 문자가 깨질 수 있다.
+      * Date: 현재 날짜와 시간을 표시한다.
+      * Expires: Expires 헤더는 응답이 더 이상 신선하지 않다고 판단할 날짜/시간을 포함한다. 0과 같은, 유효하지 않은 날짜는 과거의 시간을 나타내어 리소스가 이미 만료되었음을 의미한다. 응답 내에 "max-age" 혹은 "s-max-age" 디렉티브를 지닌 Cache-Control 헤더가 존재할 경우, Expires 헤더는 무시됩니다.
+      * Cache-Control: 브라우저가 이 페이지를 캐쉬로 처리할 때 참고하라는 의미이며 no-cache로 지정할 경우 캐시하지 말라는 의미다. no-cache는 관리자 페이지, 로그인 페이지와 같이 중요한 페이지일 경우 설정한다.
+      * X-Content-Type-Options: Content-Type 헤더에 명시된 MIME 유형이 변경되어서는 안됨을 나타냄
+      * X-Frame-Options: 브라우저가 <frame>, <iframe> 또는 <object>에서 페이지를 렌더링 할 수 있어야하는지 여부를 나타낸다. 콘텐츠가 다른 사이트에 퍼지지 않도록 함으로써 클릭 공격을 피할 수 있다. `SAMEORIGIN`가 있는 페이지의 경우 페이지 자체와 동일한 출처의 프레임에만 표시 될 수 있다.
+      * X-XSS-Protection: XXS 공격을 감지 할 때 페이지 로드를 중지시킬 수 있다. 해당 값(`1; mode=block`은 XSS 필터링을 사용하며 공격이 탐지되면 안전하지 않는 영역을 제거하는게 아니라, 페이지 렌더링을 중단한다는 의미다.)
+      * Server: 요청을 처리하기 위한 원(origin) 서버의 소프트웨어 정보를 포함하고 있습니다. (GSE: 구글 서블릿 엔진)
+      * Accept-Ranges: 부분 요청의 지원을 알리기 위해 서버에 의해 사용되는 표식이다. 이 필드의 값은 범위를 정의하기 위해 사용될 수 있는 단위를 가리킨다. (`none`: 지원되는 범위의 단위가 없음을 나타내는데, 이는 헤더가 존재하지 않는 경우와 동일하므로 거의 사용되지 않음. IE9같은 브라우저의 경우 다운로드 매니저의 일시중지 버튼을 비활설화(disable) 혹은 제거(remove)할 때 쓰임)
+      * Vary: 향후 요청 헤더를 일치시켜 원 서버에서 새 요청을 요청하는 대신 캐시 된 응답을 사용할 수 있는지 여부를 결정한다. Vary 헤더는 동일한 200 OK 응답에 설정된 것과 똑같이 304 Not Modified 응답에도 설정해야 한다.
 
 ----
 
