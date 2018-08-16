@@ -7,7 +7,7 @@ http.createServer((req, res) => {
 	const pathname = url.parse(req.url).pathname;
 	const parsedUrl = url.parse(req.url); // 객체화 된 url
 	const parsedQuery = qs.parse(parsedUrl.query, '&', '=');
-
+	
 	if (pathname === '/') {
 		res.writeHead(200, {'Content-Type' : 'text/html; charset=utf-8'});
 		res.end('Hello world!');
@@ -19,3 +19,19 @@ http.createServer((req, res) => {
 		res.end('404 Page Not Found');
 	}
 }).listen(8080);
+
+// const xhr = new XMLHttpRequest()
+// xhr.responseType = 'text';
+
+// xhr.onload = function() {
+// 	if (xhr.readyState === xhr.DONE) {
+// 		if (xhr.status == 200) {
+// 			console.log(xhr.reponse);
+// 			console.log(xhr.responseText);
+// 			console.log('test')
+// 		}
+// 	}
+// }
+
+// xhr.open('GET', '/foo');
+// xhr.send();

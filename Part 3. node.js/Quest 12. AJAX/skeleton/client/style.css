@@ -1,3 +1,96 @@
 * {
-	/* TODO: 필요한 CSS를 채워넣어 보세요! */
+    margin: 0;
+    padding: 0;
+}
+
+a,
+button {
+    color: #404040;
+    text-decoration: none;
+}
+
+a:hover,
+button:hover,
+input:hover {
+    color: rgba(218, 44, 102, 0.788); 
+    text-decoration: none; 
+    cursor: pointer;  
+	opacity: 0.8;
+}
+
+button {
+    border: none;
+    margin: 0;
+    padding: 0;
+    width: auto;
+    overflow: visible;
+    background: transparent;
+    outline: none;
+}
+
+ul, li {
+	list-style: none;
+}
+
+h1, h2 {
+	margin: 1rem auto;
+}
+
+body {
+    background-color: #ffffff;
+    height: 100vh;
+    text-align: center;
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    font-family: 'mono';
+    font-weight: 400;
+}
+
+main {
+    visibility: hidden;
+}
+
+.visible {
+    visibility: visible;
+}
+
+nav {
+    visibility: hidden;
+	margin: 0 auto;
+}
+
+nav li {
+	float: left;
+	padding: 0 10px;
+	margin: 0 5px;
+	background-color: #f8ebe7;
+}
+
+textarea,
+input {
+	outline: none;
+}
+
+.memo {
+	margin: 1rem auto;
+	width: 40%;
+	height: 500px;
+	padding: 10px;
+	border-radius: 3px;
+	overflow-y: scroll;
+    font-size: 22px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+}
+
+.submit-area {
+	margin: 1rem auto;
+}
+
+.submit-btn {
+	border: none;
+	padding: 5px 10px;
+    border-radius: 2px;
+    background-color: #f8ebe7;
 }

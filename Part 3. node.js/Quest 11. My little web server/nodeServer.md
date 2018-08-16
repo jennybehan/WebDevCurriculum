@@ -35,7 +35,7 @@ PATCH: PATCH 메소드는 리소스의 부분만을 수정하는 데 쓰입니�
 
 리소스의 미디어 타입을 나타내기 위해 사용되는 값. 클라이언트에게 반환된 컨텐츠의 컨텐츠 유형이 실제로 무엇인지를 알려준다.
 
-`media-type | charset | boundary` : 리소스 혹은 데이터의 MIME type | 문자 인코딩 표준 | 
+`media-type | charset | boundary` : 리소스 혹은 데이터의 MIME type | 문자 인코딩 표준 | 멀티파트 개체의 캡슐화(?)
 
 ```
 Content-Type: text/html; charset=utf-8
