@@ -47,8 +47,9 @@ body {
     font-weight: 400;
 }
 
-main {
-    visibility: hidden;
+.wrapper {
+    display: flex;
+    flex-flow: column;
 }
 
 .visible {
@@ -56,14 +57,15 @@ main {
 }
 
 nav {
+    width: 50%;
+    margin: 0 auto;
+    background: rgb(252, 224, 189);
     visibility: hidden;
-	margin: 0 auto;
 }
 
-nav li {
-	float: left;
+.memo-list li {
 	padding: 0 10px;
-	margin: 0 5px;
+	margin: 5px;
 	background-color: #f8ebe7;
 }
 
@@ -72,16 +74,31 @@ input {
 	outline: none;
 }
 
-.memo {
-	margin: 1rem auto;
-	width: 40%;
-	height: 500px;
-	padding: 10px;
+form {
+    display: flex;
+    flex-flow: column;
+    visibility: hidden;
+}
+
+.memo,
+.title {
+    margin: 1rem auto;
+    width: 40%;
 	border-radius: 3px;
 	overflow-y: scroll;
     font-size: 22px;
     background-color: #f9f9f9;
     border: 1px solid #ddd;
+}
+
+.title {
+    width: 20%;
+    margin: 1rem auto 0;
+}
+
+.memo {
+    height: 500px;
+    padding: 10px;
 }
 
 .submit-area {

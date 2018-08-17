@@ -4,7 +4,7 @@
 * `setTimeout()`
 * AJAX, `XMLHttpRequest`, `fetch()`
 
-* AJAX: 비동기적 자바스크립트와 XML의 약어로 브라우저 내에서 비동기 기능을 제공하는 모든 기법을 통칭한다. AJAX를 통해 서버와 비동기적으로 통신하면 페이지 전체를 새로 고칠 필요 없이 서버에서 데이터를 받아올 수 있다. 이를 가능하게 한 것이  XMLHttpRequest이다.
+* AJAX: 비동기적 자바스크립트와 XML의 약어로(Asynchronous Javascript And Xml) 비동기식 자바스크립트와 확장 마크업 언어를 뜻한다. 보통 브라우저 내에서 비동기 기능을 제공하는 모든 기법을 통칭한다. AJAX를 통해 서버와 비동기적으로 통신하면 페이지 전체를 새로 고칠 필요 없이 서버에서 데이터를 받아올 수 있다. 이를 가능하게 한 것이  XMLHttpRequest이다.
 
 브라우저는 `<script>` 태그를 만나면 스크립트를 로드하고 처리하기 전까지 다른 작업은 중단한다. 이를 동기 처리 모델이라고 한다. AJAX는 서버로부터 데이터를 가져와 전체 페이지를 새로 고치지 않고도 페이지의 일부만 로드할 수 있게 하는 기법이다. 사용자는 웹 브라우저가 데이터를 로드하는 동안 기다리지 않고 다른 일을 할 수 있으므로 사용자 경험을 제공할 수 있다.
 
@@ -18,11 +18,35 @@
 
 서버와의 통신을 위해 사용하는 객체로 전체 페이지를 리프레시 할 필요없이 데이터를 되돌려받아 페이지의 일부만 업데이트 할 수 있다. XMLHttpRequest API는 콜백을 기반으로 하며 AJAX 프로그래밍에서 많이 사용된다.
 
-(이 API를 프로미스화 시켜서 async에서 사용한다는 것은, API 함수에서 반환되는 프로미스를 콜백 내부로부터 받아서 완료하거나 거절해야 한다는 의미가 된다.(???))
+1. 클라이언트에서 `XMlHttpRequest` 객체를 생성하여 서버로 보낸다.
+2. 서버에서 메시지를 받으면 해당 정보를 다시 브라우저로 보낸다.
+3. 클라이언트가 서버로부터 응답을 받으면 해당 정보를 특정 영역에 뿌려준다.
 
 ### `fetch` API는 무엇이고 어떻게 동작하나요?
 
-Fetch API는 네트워크를 포함하여 리소스를 가져 오는 인터페이스를 제공합니다. XMLHttpRequest를 사용하는 사람에게는 익숙한 것처럼 보이지만 새로운 API는 더욱 강력하고 유연한 기능 세트를 제공합니다
+Fetch API는 근본적으로 XHR를 조금 더 모던하게 쓰는 방법입니다. 브라우저에서 Fetch 위에 구축 된 개발자 및 기타 API 모두에서 비동기 HTTP 요청을 자바 스크립트에서보다 쉽게 ​​수행 할 수 있습니다.
+
+```javascript
+// XHR code
+var request = new XMLHttpRequest();
+request.open('GET', url);
+request.responseType = 'text';
+
+request.onload = function() {
+  poemDisplay.textContent = request.response;
+};
+
+request.send();
+
+// ajax code
+fetch(url)
+    .then(function(response) {
+        response.text()
+        .then(function(text) {
+            poemDisplay.textContent = text;
+        });
+    });
+```
 
 #### 자바스크립트의 Promise는 어떤 객체이고 어떤 일을 하나요?
 
@@ -119,6 +143,10 @@ async/await 함수는 Promise의 동작을 동기적으로 사용할 수 있게 
   * `res.json()`: JSON 객체로 응답
   * `res.render()`: 템플릿을 렌더링
   * `res.sendFile()`: 파일 다운로드
+
+* `filesystem` 관련 메소드
+  * `fs.writeSync`: 비동기적 파일 쓰기. 연속된 문자열 데이터를 파일에 저장
+  * `fs.write`: 비동기적 파일 쓰기. 쓰기 요청을 이벤트 큐에 넣은 후 호출한 코드로 제어를 반환한다. 실제 쓰기는 이벤트 큐에서 쓰기 요청이 뽑아져 나와 실행되기 전까지 이뤄지지 않는다. 동일한 파일에 여러 쓰기 요청을 수행할 때는 실행 순서가 보장되지 않으므로 주의해야 함. 콜백을 이용해 순서를 맞출 수 있다.
 
 * `qs`라이브러리와 `query-string`라이브러리 사용은 어떻게 다를까?: https://stackoverflow.com/questions/29960764/what-does-extended-mean-in-express-4-0
 

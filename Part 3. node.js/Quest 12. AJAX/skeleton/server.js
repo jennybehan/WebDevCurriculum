@@ -2,7 +2,6 @@ const express = require('express'),
 	  path = require('path'),
 	  app = express(),
 	  bodyParser = require('body-parser'),
-	  queryString = require('querystring'),
 	  fs = require('fs');
 
 	  
@@ -18,15 +17,14 @@ app.get('/', (req, res) => {
 })
 
 app.post('/memo', (req, res) => {
-	res.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'});
 	let data = req.body;
 	let fileName = data.title + '.txt';
 	let fileText = data.body;
-	fs.writeFileSync(pathName + fileName, fileText, 'utf8', (err) => {
+	fs.writeFile(pathName + fileName, fileText, 'utf8', (err) => {
+		// res.send(fileName +' 제목으로' + fileText + ' 내용의 ' + '메모가 등록되었습니다 ✅');
+		console.log('메모가 등록되었습니다 ✅')
 		if (err) return;
 	})
-	// res.redirect('./memo/' + fileName)
-	// res.send(fileName+' 제목으로' + fileText + ' 내용의 ' + '메모가 등록되었습니다 ✅');
 })
 
 // READ
@@ -45,17 +43,23 @@ app.get('/memo', (req, res) => {
 		var list = `<li><a href="/memo/${file}">https://localhost:8080/memo/${file}</a></li>`;
 		return list;
 	})
-	res.send(dom.join(''))
+	
+	res.send(dom.join(''));
 })
 
 
-app.put('/memo', (req, res) => {
+app.put('/memo/:fileName', (req, res) => {
 })
 
-app.delete(`/delete/aa.txt`, (req, res) => {
+app.delete(`/memo/:fileName`, (req, res) => {
+	const fileName = req.params.fileName;
+
+	fs.unlink(pathName + fileName, (err) => {
+		if (err) throw err;
+		console.log('deleted')
+	})
 	res.send('delete request');
-	console.log('deleted')
-
+	// res.redirect('/')
 })
 
 const server = app.listen(8080, () => {

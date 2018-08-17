@@ -11,21 +11,19 @@ class Notepad {
 		this.notePad.memo = document.querySelector('.memo-board');
 		this.notePad.submitBtn = document.querySelector('.submit-btn')
 		
-		this.notePad.memoTitle = document.querySelector('.title').value;
-		this.notePad.memoData = document.querySelector('.memo').value;
-
-		this.notePad.newMemo = this.newMemo;
-		this.notePad.removeMemo = this.removeMemo;
-		
 		this.notePad.newMemoBtn.addEventListener('click', this.newMemo);
-		this.notePad.newMemoBtn.addEventListener('click', this.changeButtonText);
-		
+		this.notePad.getListBtn.addEventListener('click', this.newList);
+
+		this.notePad.newMemoBtn.addEventListener('click', this.changeButtonText);		
 		this.notePad.submitBtn.addEventListener('click', this.saveMemo.bind(this));
-		this.notePad.getListBtn.addEventListener('click', this.loadList.bind(this));
 	}
 	
 	newMemo() {
 		this.memo = new Memo();
+	}
+
+	newList() {
+		this.list = new List();
 	}
 
 	changeButtonText() {
@@ -34,13 +32,6 @@ class Notepad {
 		} else {
 			this.textContent = '메모 작성 취소'
 		}
-	}
-
-	loadList() {
-		fetch('/memo', {
-			method: 'GET',
-			headers: {'Content-Type': 'text/plain; charset=utf-8'}
-		})
 	}
 
 	saveMemo() {
@@ -57,51 +48,61 @@ class Notepad {
 			})
 			.then(res => {
 				if (res.ok) {
-					console.log('res: ', res);
-					return;
+					console.log(res.body)
 				}
 				throw new Error('Request failed');
 			})
 			.catch(err => {
 				console.log(err)
 			})
-			this.loadMemo(fileName);
+			
 	}
 
-	loadMemo() {
-		fetch('/memo', {
-			method: 'GET',
-			headers: {'Content-Type': 'text/plain; charset=utf-8'}
-		})
-		.then(res => {
-			console.log(res)
-		})
-	}
-
-	editMemo() {
-
-	}
+	// deleteMemo(item, url) {
+	// 	fetch(url + '/' + item, {
+	// 		method: 'DELETE',
+	// 		headers: {'Content-Type': 'text/plain; charset=utf-8'}
+	// 	})
+	// 	.then(res => {
+	// 		res.json();
+	// 		res.redirect('/');
+	// 	})
+	// }
 };
 
 class Memo {
 	constructor() {
-		this.memo = document.querySelector('.memo-board');
-		this.memo.classList.toggle('visible');
-	}
-
-	setSelectedMemo(id) {
-		this.memo.id = id;
-		console.log(this.memo)
+		this.memoBoard = document.querySelector('.memo-board');
+		this.memoBoard.classList.toggle('visible');	
 	}
 }
 
 class List {
 	constructor() {
-		this.list = document.querySelector('nav');
-		this.list.classList.toggle('visible');
+		this.listBoard = document.querySelector('.memo-list');
+		// this.memoList = document.querySelectorAll('.memo-list ul')
+		this.listBoard.classList.toggle('visible');	
+		this.listBoard.addEventListener('click', this.loadList.bind(this))
 	}
 
-	selectListItem() {
-
+	loadList() {
+		console.log(this)
+		fetch('/memo', {
+			method: 'GET',
+			headers: {'Content-Type': 'text/plain; charset=utf-8'}
+		})
+		.then(res => {
+			if (res.ok) {
+				console.log(res)
+				const navList = document.createElement('li');
+				navList.textContent = res.body;
+				return;
+			}
+			throw new Error('Request failed');
+		})
+		.catch(err => {
+			console.log(err)
+		})
 	}
+
 }
