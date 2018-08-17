@@ -6,7 +6,7 @@ const express = require('express'),
 
 	  
 // middlewares
-app.use(express.static('client'));
+app.use(express.static('client')); // app.use(express.static('public')) : 정적 파일을 사용하기 위한 설정
 app.use(bodyParser.urlencoded({ extended: true })) // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.json()) // parse requests of content-type - application/json
 	  
@@ -17,6 +17,7 @@ app.get('/', (req, res) => {
 })
 
 app.post('/memo', (req, res) => {
+	res.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'});
 	let data = req.body;
 	let fileName = data.title + '.txt';
 	let fileText = data.body;

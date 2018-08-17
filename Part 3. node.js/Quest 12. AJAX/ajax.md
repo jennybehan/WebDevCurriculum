@@ -134,15 +134,16 @@ async/await 함수는 Promise의 동작을 동기적으로 사용할 수 있게 
 ### Express
 
 * `app` 관련 메소드
-  * `app.use`
+  * `app.use`: middleware 설정
   * `app.set`
-  * `app.get`
+  * `app.get`: GET 요청이 만들어졌을 때 해당 요청에 대한 반응
 
 * `res` 관련 메소드
-  * `res.send()`: 문자열로 응답
+  * `res.end()`: 응답 프로세스 종료
+  * `res.send()`: 다양한 유형의 응답을 전송
   * `res.json()`: JSON 객체로 응답
   * `res.render()`: 템플릿을 렌더링
-  * `res.sendFile()`: 파일 다운로드
+  * `res.sendFile()`: 파일을 옥텟 스트림의 형태로 전송합니다.
 
 * `filesystem` 관련 메소드
   * `fs.writeSync`: 비동기적 파일 쓰기. 연속된 문자열 데이터를 파일에 저장
@@ -151,6 +152,11 @@ async/await 함수는 Promise의 동작을 동기적으로 사용할 수 있게 
 * `qs`라이브러리와 `query-string`라이브러리 사용은 어떻게 다를까?: https://stackoverflow.com/questions/29960764/what-does-extended-mean-in-express-4-0
 
 * `body-parser`: 클라이언트의 HTTP 요청 중 POST 요청의 바디 데이터에 접근하기 위한 모듈
+
+* app.router 사용
+
+* `__dirname`: 현재 작업 디렉터리 지정
+* `middleware`: 개발자와 기반 시스템 간에 존재하는 소프트웨어. 시스템에 따라 운영체제를 의미하는 것일 수도 있고 Node에서 제공되는 것과 같은 기반기술 일 수도 있다. 애플리케이션과 기반 시스템 사이에서 통신 체인 역할을 수행하는 것이다. 
 
 ## Quest
 * 자바스크립트를 이용하여 간단한 웹브라우저 기반의 텍스트 파일 메모장을 만들어 보겠습니다.
