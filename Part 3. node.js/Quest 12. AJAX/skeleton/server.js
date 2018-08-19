@@ -2,14 +2,19 @@ const express = require('express'),
 	  path = require('path'),
 	  app = express(),
 	  bodyParser = require('body-parser'),
-	  fs = require('fs');
+	  fs = require('fs'),
+	  util = require('util');
 
-	  
+// GET /memo list all contacts
+// POST /memo create new contact
+// GET /memo/{id} retrieve a single contact
+// PUT /memo/{id} update a single contact
+
 // middlewares
 app.use(express.static('client')); // app.use(express.static('public')) : 정적 파일을 사용하기 위한 설정
 app.use(bodyParser.urlencoded({ extended: true })) // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.json()) // parse requests of content-type - application/json
-	  
+
 const pathName = './memo/';
 
 app.get('/', (req, res) => {
@@ -17,39 +22,50 @@ app.get('/', (req, res) => {
 })
 
 app.post('/memo', (req, res) => {
-	res.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'});
 	let data = req.body;
 	let fileName = data.title + '.txt';
 	let fileText = data.body;
 	fs.writeFile(pathName + fileName, fileText, 'utf8', (err) => {
-		// res.send(fileName +' 제목으로' + fileText + ' 내용의 ' + '메모가 등록되었습니다 ✅');
-		console.log('메모가 등록되었습니다 ✅')
+		res.json({
+			"title": fileName,
+			"body": fileText,
+		})
 		if (err) return;
 	})
 })
 
-// READ
 app.get('/memo/:fileName', (req, res) => {
 	const fileName = req.params.fileName;
-	
+
 	fs.readFile(pathName + fileName, 'utf-8', (err, result) => {
-		if (err) throw err;
-		res.send(result);
+		const jsonData = {data: data};
+
+		res.writeHead(200, {'Content-Type': 'application/json'});
+		res.end(JSON.stringify(jsonData));
+		// res.send(result);
 	})
 })
 
 app.get('/memo', (req, res) => {
-	const files = fs.readdirSync('./memo');
-	const dom = files.map(file => {
-		var list = `<li><a href="/memo/${file}">https://localhost:8080/memo/${file}</a></li>`;
-		return list;
+ 	res.writeHead(200, {'Content-Type': 'application/json'});
+
+	const readdirAsync = util.promisify(fs.readdir)
+ 	const readFileAsync = filePath => new Promise((resolve, reject) => {
+		fs.readFile(filePath, (err, data) => {
+			data = data.toString();
+			if (err) reject(err);
+			resolve({filePath, data});
+		})
 	})
-	
-	res.send(dom.join(''));
-})
 
-
-app.put('/memo/:fileName', (req, res) => {
+	readdirAsync(pathName)
+		.then(files => Promise.all(files.map(file => 
+			readFileAsync(pathName + file))
+		).then(data => {
+			console.log(data)
+			res.end(JSON.stringify(data))
+		}).catch(err => { console.error(err) })
+	)
 })
 
 app.delete(`/memo/:fileName`, (req, res) => {

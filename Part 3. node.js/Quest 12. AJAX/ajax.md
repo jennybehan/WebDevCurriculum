@@ -126,6 +126,8 @@ async/await 함수는 Promise의 동작을 동기적으로 사용할 수 있게 
 
 ## 스터디 노트
 
+* 파일 읽기(GET): 다른 행동이 막히게(Blocking) 되므로 비동기로 읽어오는 방식을 사용한다.(`fs.writeFile`) 비동기 방식의 경우에는 파라미터로 함수를 전달하여 동기 입출력이 끝나면 실행될 콜백함수를 등록한다. 입출력이 모두 끝나고 나면 콜백함수가 실행된다.
+
 * 비동기 실행의 가장 큰 목적, 가장 중요한 요점은 *어떤 것도 차단하지 않는다*는 것
 * 비동기 실행에서 혼란스럽고 에러도 자주 일어나는 부분은 스코프와 글로저가 비동기 실행에 영향을 미치는 부분이다.
 * 프로미스 기반 비동기 함수를 호출하면 그 함수는 Promise 인스턴스를 반환합니다. 프로미스는 성공fullfilled하거나, 실패rejected하거나 단 두 가지뿐입니다. 프로미스는 성공 혹은 실패 둘 중 하나만 일어납니다. 성공이든 실패든 단 한번만 일어납니다. 프로미스가 성공 혹은 실패하면 그 프로미스를 결정됐다settled고 합니다.
@@ -166,3 +168,56 @@ async/await 함수는 Promise의 동작을 동기적으로 사용할 수 있게 
   * 탭을 통해 여러 개의 파일을 동시에 편집할 수 있어야 합니다.
   * 이 메모장의 메모들은 서버의 파일시스템에 그대로 저장되어야 합니다.
 * `skeleton` 디렉토리에서 작업을 하시되, 작업을 시작하기 전에 해당 디렉토리에서 `npm install` 명령을 날리시면 자동으로 express가 설치됩니다.
+
+* GET memo list sync/async
+
+```javascript
+const files = fs.readdirSync(__dirname + '/memo');
+ res.writeHead(200, {'Content-Type': 'application/json'});
+ console.log(files);
+ const fileList = {
+ 	files: files
+ }
+ // console.log(fileList)
+ // res.end(JSON.stringify(files));
+ res.end(JSON.stringify(fileList));
+	
+ fs.readdir(pathName, (err, files) => {
+ 	if (err) {
+ 		console.log(err);
+ 	} else {
+ 		for (var i = 0; i < files.length; i++) {
+ 			const file = pathName + files[i];
+ 		}
+ 	}
+ })
+ fs.readFile(file, (err, data) => {
+ 	if (err) return console.error(err);
+ 	const dataObj = {
+ 		"title": file,
+ 		"body": data.toString()
+ 	}
+ 	var result = JSON.stringify(dataObj);
+ 	console.log(result)
+ })
+
+ const readdirAsync = util.promisify(fs.readdir)
+ const readFileAsync = util.promisify(fs.readFile)
+	
+ readdirAsync(pathName).then(files => {
+ 	for (var i = 0; i < files.length; i++) {
+ 		const file = pathName + files[i];
+ 		Promise.all(files.map(file => readFileAsync(pathName, "utf-8", file)))
+ 			.then(data => {
+ 				const dataObj = {
+ 					"title": file,
+ 					"body": data.toString()
+ 				}
+ 				var result = JSON.stringify(dataObj);
+ 				res.send(result)
+ 			}).catch(err => { console.error(err) })
+ 		}
+ 	}
+ ).catch(err => { console.error(err) })
+
+```
