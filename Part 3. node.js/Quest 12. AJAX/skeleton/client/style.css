@@ -52,21 +52,45 @@ body {
     flex-flow: column;
 }
 
+.memo-board {
+    display: flex;
+    justify-content: center;
+}
+
+.memo-board-wrapper {
+    margin: 2rem 0;
+}
+
+.memo-board-new {
+    display: flex;
+    flex-flow: column;
+}
+
+.memo-board-new,
+.memo-board-preview {
+    width: 50%;
+}
+
 .visible {
     visibility: visible;
 }
 
 nav {
-    width: 50%;
+    width: 100%;
     margin: 0 auto;
-    background: rgb(252, 224, 189);
-    visibility: hidden;
+    padding: 20px;
+    border-bottom: 1px solid #aaa;
+    border-top: 1px solid #aaa;
 }
 
 .memo-list li {
-	padding: 0 10px;
-	margin: 5px;
-	background-color: #f8ebe7;
+    padding: 0 10px;
+    display: inline-block;
+}
+
+.memo-list li:hover {
+    cursor: pointer;
+    opacity: 0.7;
 }
 
 textarea,
@@ -81,23 +105,38 @@ form {
 }
 
 .memo,
-.title {
-    margin: 1rem auto;
-    width: 40%;
+.title,
+.memo-preview {
 	border-radius: 3px;
-	overflow-y: scroll;
-    font-size: 22px;
     background-color: #f9f9f9;
     border: 1px solid #ddd;
 }
 
+.memo,
+.title,
+.memo-preview,
+.memo-preview-title {
+    width: 40%;
+    margin: 1rem auto;
+}
+
+.memo-preview-title {
+    border-bottom: 1px solid #aaa;
+}
+
+.memo,
 .title {
-    width: 20%;
+    overflow-y: scroll;
+    font-size: 22px;
+}
+
+.title {
     margin: 1rem auto 0;
 }
 
 .memo {
     height: 500px;
+    width: 60%;
     padding: 10px;
 }
 
@@ -110,4 +149,9 @@ form {
 	padding: 5px 10px;
     border-radius: 2px;
     background-color: #f8ebe7;
+}
+
+.memo-preview {
+    width: 60%;
+    height: 500px;
 }

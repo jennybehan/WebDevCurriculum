@@ -36,19 +36,17 @@ app.post('/memo', (req, res) => {
 
 app.get('/memo/:fileName', (req, res) => {
 	const fileName = req.params.fileName;
-
-	fs.readFile(pathName + fileName, 'utf-8', (err, result) => {
-		const jsonData = {data: data};
-
+	fs.readFile(pathName + fileName, 'utf-8', (err, data) => {
 		res.writeHead(200, {'Content-Type': 'application/json'});
-		res.end(JSON.stringify(jsonData));
-		// res.send(result);
+		const fileData = {
+			data
+		}
+		res.end(JSON.stringify(fileData));
 	})
 })
 
 app.get('/memo', (req, res) => {
  	res.writeHead(200, {'Content-Type': 'application/json'});
-
 	const readdirAsync = util.promisify(fs.readdir)
  	const readFileAsync = filePath => new Promise((resolve, reject) => {
 		fs.readFile(filePath, (err, data) => {
@@ -62,8 +60,10 @@ app.get('/memo', (req, res) => {
 		.then(files => Promise.all(files.map(file => 
 			readFileAsync(pathName + file))
 		).then(data => {
-			console.log(data)
-			res.end(JSON.stringify(data))
+			const fileData = {
+				data
+			}
+			res.end(JSON.stringify(fileData))
 		}).catch(err => { console.error(err) })
 	)
 })

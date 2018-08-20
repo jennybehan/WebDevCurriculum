@@ -8,38 +8,40 @@
 	<body>
 		<!-- TODO: 이 곳을 채워 클라이언트를 만들어 보세요 -->
 		<h1>✍</h1>
-		<button class="new-memo">새 메모 작성</button>
-		<button class="list-memo">메모 리스트 보기</button>
-		<!-- <a href="/memo" class="new-memo">새 메모 작성</a>
-		<a href="/memo/list" class="list-memo">메모 리스트 보기</a> -->
 		<div class="wrapper">
 			<main class="memo-board-wrapper">
-				<!-- <form action="/memo" class="memo-board" name="submitMemo"> -->
+				<nav class="memo-list">
+					<ul>
+					</ul>
+				</nav>
 				<div class="memo-board">
-					<input 
-						class="title"
-						type="text"
-						name="memo[title]"
-						placeholder="메모 제목"
-					/>
-					<textarea
-						class="memo"
-						type="text"
-						name="memo[body]"
-						form="submitMemo"
-					></textarea>
-					<div class="submit-area">
+					<div class="memo-board-new">
 						<input 
-							class="submit-btn"
-							type="submit" 
-							value="노트 등록"
+							class="title"
+							type="text"
+							name="memo[title]"
+							placeholder="메모 제목"
 						/>
+						<textarea
+							class="memo"
+							type="text"
+							name="memo[body]"
+							form="submitMemo"
+						></textarea>
+						<div class="submit-area">
+							<input 
+								class="submit-btn"
+								type="submit" 
+								value="노트 등록"
+							/>
+						</div>
+					</div>
+					<div class="memo-board-preview">
+						<div class="memo-preview-title"></div>
+						<div class="memo-preview"></div>
+						<button class="update-btn">수정</button>
 					</div>
 				</div>
-				<nav class="memo-list">
-					<h2>links</h2>
-					<ul></ul>
-				</nav>
 			</main>
 		</div>
 		<script>
