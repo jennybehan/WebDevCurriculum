@@ -27,8 +27,6 @@ class Memo {
 		this._memoTitle = this._newMemoBoard.querySelector('.title');
 		this._memoBody = this._newMemoBoard.querySelector('.memo');
 		this._updateBtn = document.querySelector('.update-btn');
-		this._previewTitle = document.querySelector('.memo-preview-title');
-		this._previewBody = document.querySelector('.memo-preview');
 		this._submitBtn.addEventListener('click', this.saveMemo.bind(this));
 		this._updateBtn.addEventListener('click', this.updateMemo.bind(this));
 	}
@@ -60,11 +58,12 @@ class Memo {
 		const changingBody = this._previewBody.textContent;
 
 		this._memoTitle.value = changingTitle.split('.txt')[0];
-		this._memoTitle.setAttribute("disabled", "") // [TODO ]title 변경도 반영하기
+		this._memoTitle.setAttribute("disabled", "") // [TODO] title 변경도 반영하기
 		this._memoBody.value = changingBody;
 	}
 }
 
+// 탭, 탭에서 열려있는 메모 상태 관리
 class List {
 	constructor() {
 		this._listBoard = document.querySelector('.memo-list');

@@ -2,11 +2,60 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<link rel="stylesheet" href="/style.css">
-		<script src="/notepad.js"></script>
+		<link rel="stylesheet" href="./style.css">
+		<script src="./notepad.js"></script>
 	</head>
 	<body>
 		<!-- TODO: 이 곳을 채워 클라이언트를 만들어 보세요 -->
+		<h1>✍</h1>
+		<div class="wrapper">
+			<div class="login">
+				<form action='/login' method='post'>
+					<div>
+						<div>아이디: <input class="userId" type='text' name='userId' /></div>
+						<div>비밀번호: <input class="userPw" type='password' name='userPw' /></div>
+					</div>
+					<input 
+						class='login-btn'
+						type='submit' 
+						value='로그인'>
+				</form>
+			</div>
+			<main class="memo-board-wrapper">
+				<nav class="tab">
+					<ul>
+					</ul>
+				</nav>
+				<div class="memo-board">
+					<div class="memo-board-new">
+						<input 
+							class="title"
+							type="text"
+							name="memo[title]"
+							placeholder="메모 제목"
+						/>
+						<textarea
+							class="memo"
+							type="text"
+							name="memo[body]"
+							form="submitMemo"
+						></textarea>
+						<div class="submit-area">
+							<input 
+								class="submit-btn"
+								type="submit" 
+								value="노트 등록"
+							/>
+							<button class="update-btn">수정</button>
+						</div>
+					</div>
+					<!-- <div class="memo-board-preview">
+						<div class="memo-preview-title"></div>
+						<div class="memo-preview"></div>
+					</div> -->
+				</div>
+			</main>
+		</div>
 		<script>
 			let notepad = new Notepad();
 		</script>
