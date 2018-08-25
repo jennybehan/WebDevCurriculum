@@ -18,11 +18,11 @@ class Notepad {
 		this.getMemoData();
 		this.setLogin();
 	}
-
+	
 	setLogin() {
 		this.notePad.login = new Login();
 	}
-
+	
 	makeNewMemo() {
 		this._memoTitle.value = '';
 		this._memoText.value = '';
@@ -46,7 +46,7 @@ class Notepad {
 	saveMemo() {
 		let dataObj = {};
 		dataObj.title = this._memoTitle.value;
-		dataObj.body = this._memoText.value;
+		dataObj.text = this._memoText.value;
 		const data = JSON.stringify(dataObj)
 		const xhr = new XMLHttpRequest();
 		xhr.open('POST', 'http://localhost:8080/memo', true);
@@ -58,6 +58,7 @@ class Notepad {
 				console.log('error!')
 			}
 		}
+		this.setMemoData(JSON.parse(data));
 		xhr.send(data)
 		window.location.reload();
 	}
