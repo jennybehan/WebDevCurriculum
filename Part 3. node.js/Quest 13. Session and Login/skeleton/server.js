@@ -77,19 +77,21 @@ app.get('/logout', (req, res) => {
 
 app.post('/memo', (req, res) => {
 	let data = req.body;
-	let fileName = data.title + '.txt';
-	let fileText = data.body;
-	fs.writeFile(pathName + fileName, fileText, 'utf8', (err) => {
+	let fileName = data.title.split('.txt')[0];
+	let fileText = data.text;
+	
+	fs.writeFile(path.join(__dirname, pathName) + fileName + '.txt', fileText, 'utf8', (err) => {
 		res.json({
 			"title": fileName,
 			"body": fileText,
 		})
-		if (err) return;
+		if (err) {
+			console.error(err);
+		}
 	})
 })
 
 app.get('/memo/:fileName', (req, res) => {
-	console.log('test')
 	const fileName = req.params.fileName;
 	fs.readFile(pathName + fileName, 'utf-8', (err, data) => {
 		res.writeHead(200, {'Content-Type': 'application/json'});

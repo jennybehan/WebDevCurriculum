@@ -45,7 +45,7 @@ class Notepad {
 
 	saveMemo() {
 		let dataObj = {};
-		dataObj.title = this._memoTitle.value;
+		dataObj.title = this._memoTitle.value.split('./memo/')[1];
 		dataObj.text = this._memoText.value;
 		const data = JSON.stringify(dataObj)
 		const xhr = new XMLHttpRequest();
@@ -70,6 +70,7 @@ class Notepad {
 			if (xhr.status === 200 || xhr.status === 201) {
 				const dataObj = JSON.parse(xhr.responseText);
 				const memoList = dataObj.data;
+				console.log(memoList)
 				memoList.map((memo, index) => {
 					memo.id = index;
 					this.getTabList(memo);
