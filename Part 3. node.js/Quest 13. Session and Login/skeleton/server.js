@@ -77,6 +77,7 @@ app.get('/logout', (req, res) => {
 
 app.post('/memo', (req, res) => {
 	let data = req.body;
+	console.log(data)
 	let fileName = data.title.split('.txt')[0];
 	let fileText = data.text;
 	

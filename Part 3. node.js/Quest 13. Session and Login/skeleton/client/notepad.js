@@ -8,9 +8,11 @@ class Notepad {
 		this._memoText = document.querySelector('.text');
 		this.tabList = document.querySelector('.tab-list ul');
 		this.tabItem = document.querySelector('.list-item');
+		this.newMemoBtn.addEventListener('click', this.saveMemo.bind(this))
 		this.submitBtn.addEventListener('click', this.saveMemo.bind(this));
 		this.newMemoBtn.addEventListener('click', this.makeNewMemo.bind(this));
 		this.updateBtn.addEventListener('click', this.saveMemo.bind(this))
+		// this.tabItem && this.tabItem.addEventListener('click', this.saveMemo.bind(this))
 		this.initializeNotePad();
 	}
 	
@@ -27,10 +29,11 @@ class Notepad {
 		this._memoTitle.value = '';
 		this._memoText.value = '';
 	}
-
+	
 	setMemoData(memo) {
 		this._memoTitle.value = memo.title;
 		this._memoText.value = memo.text;
+		// this.tabItem.addEventListener('click', this.saveMemo.bind(this))
 	}
 	
 	getTabList(memo) {
@@ -39,7 +42,7 @@ class Notepad {
 		this.tabList.appendChild(this.tabItem);
 		this.tabItem.textContent = memo.title;
 		this.tabItem.onclick = () => {
-			this.setMemoData(memo)
+			this.setMemoData(memo);
 		}
 	}
 
@@ -48,6 +51,7 @@ class Notepad {
 		dataObj.title = this._memoTitle.value.split('./memo/')[1];
 		dataObj.text = this._memoText.value;
 		const data = JSON.stringify(dataObj)
+		console.log(data)
 		const xhr = new XMLHttpRequest();
 		xhr.open('POST', 'http://localhost:8080/memo', true);
 		xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
@@ -58,9 +62,9 @@ class Notepad {
 				console.log('error!')
 			}
 		}
-		this.setMemoData(JSON.parse(data));
+		// this.setMemoData(JSON.parse(data));
 		xhr.send(data)
-		window.location.reload();
+		// window.location.reload();
 	}
 	
 	getMemoData() {
@@ -70,7 +74,6 @@ class Notepad {
 			if (xhr.status === 200 || xhr.status === 201) {
 				const dataObj = JSON.parse(xhr.responseText);
 				const memoList = dataObj.data;
-				console.log(memoList)
 				memoList.map((memo, index) => {
 					memo.id = index;
 					this.getTabList(memo);
