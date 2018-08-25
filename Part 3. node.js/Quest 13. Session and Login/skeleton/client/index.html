@@ -10,21 +10,26 @@
 		<h1>✍</h1>
 		<div class="wrapper">
 			<div class="login">
-				<form action='/login' method='post'>
-					<div>
-						<div>아이디: <input class="userId" type='text' name='userId' /></div>
-						<div>비밀번호: <input class="userPw" type='password' name='userPw' /></div>
-					</div>
-					<input 
-						class='login-btn'
-						type='submit' 
-						value='로그인'>
-				</form>
+				<div>
+					<div>아이디: <input class="userId" type='text' name='userId' /></div>
+					<div>비밀번호: <input class="userPw" type='password' name='userPw' /></div>
+				</div>
+				<input 
+					class='login-btn'
+					type='submit' 
+					value='로그인'
+				/>
+				<input 
+					class='logout-btn'
+					type='submit' 
+					value='로그아웃'
+				/>
 			</div>
 			<main class="memo-board-wrapper">
-				<nav class="tab">
+				<nav class="tab-list">
 					<ul>
 					</ul>
+					<button class="newmemo-btn">메모 추가</button>
 				</nav>
 				<div class="memo-board">
 					<div class="memo-board-new">
@@ -35,7 +40,7 @@
 							placeholder="메모 제목"
 						/>
 						<textarea
-							class="memo"
+							class="text"
 							type="text"
 							name="memo[body]"
 							form="submitMemo"
@@ -49,10 +54,6 @@
 							<button class="update-btn">수정</button>
 						</div>
 					</div>
-					<!-- <div class="memo-board-preview">
-						<div class="memo-preview-title"></div>
-						<div class="memo-preview"></div>
-					</div> -->
 				</div>
 			</main>
 		</div>

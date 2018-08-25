@@ -95,20 +95,20 @@ input {
 	outline: none;
 }
 
-.memo,
+.text,
 .title {
 	border-radius: 3px;
     background-color: #f9f9f9;
     border: 1px solid #ddd;
 }
 
-.memo,
+.text,
 .title {
     width: 40%;
     margin: 1rem auto;
 }
 
-.memo,
+.text,
 .title {
     overflow-y: scroll;
     font-size: 22px;
@@ -118,7 +118,7 @@ input {
     margin: 1rem auto 0;
 }
 
-.memo {
+.text {
     height: 500px;
     width: 60%;
     padding: 10px;
@@ -129,7 +129,8 @@ input {
 }
 
 .submit-btn,
-.update-btn {
+.update-btn,
+.newmemo-btn {
 	border: none;
 	padding: 5px 10px;
     border-radius: 2px;
