@@ -1,11 +1,50 @@
 class Notepad {
 	constructor() {
-		this.currentTab = null;
+		this.deselectTab = null;
 		this.handleSelectTab = this.handleSelectTab.bind(this);
 		this.handleSubmitMemo = this.handleSubmitMemo.bind(this);
 		this._submitBtn = document.querySelector('.submit-btn');
+		this.loginBtn = document.querySelector('.login-btn');
+		this.loginBtn.addEventListener('click', this.initializeLogin)
+		this.loggedIn = false;
 		this.initializeData();
 	}
+
+	initializeLogin() {
+		this.loggedIn = true;
+		this.id = document.querySelector('.userId').value;
+		this.pw = document.querySelector('.userPw').value;
+		this.value = '로그아웃';
+
+		this.user = {
+			"id": this.id,
+			"pw": this.pw
+		}
+		fetch('http://localhost:8080/login', {
+			method: 'POST',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(this.user)
+		})
+			
+	}
+
+	logout() {
+		this.loggedIn = false;
+	}
+
+	// handleMemoSubmit() {
+	// 	this.domTabList = document.querySelectorAll('.list-item');
+	// 	this.domTabList.forEach((el, index) => {
+	// 		if (this.currentTab.id !== index) {
+	// 			// el.addEventListener('click', this.handleSubmitMemo)
+	// 			// this.domTabList[index].onclick = this.handleSubmitMemo();
+	// 			this.domTabList[index].addEventListener('click', this.handleSubmitMemo)
+	// 		}
+	// 	})
+	// }
 
 	initializeData() {
 		fetch('http://localhost:8080/memo')
@@ -20,14 +59,11 @@ class Notepad {
 				this.memo = new Memo();
 				this.memo.onSubmit(this.handleSubmitMemo);
 			})
-	}
-
-	deselectTab() {
-		this.currentTab = null;
-	}
-
+		}
+		
+		
 	handleSelectTab(id) {
-		this.currentTab = this.tabList.tabList.find(tabItem => tabItem.id === id);	
+		this.currentTab = this.tabList.tabList.find(tabItem => tabItem.id === id);
 		this.memo.update(this.currentTab);
 		this.currentTab.updateData(this.currentTab)
 		if (this.currentTab) {
@@ -36,16 +72,20 @@ class Notepad {
 	}
 
 	handleSubmitMemo({ title, text }) {
-		if (this.currentTab) {
+		console.log(this)
+		if (this.currentTab === null) {
 			fetch('http://localhost:8080/memo')
 				.then(() => {
 					const newData = {
-						title: this.memo._memoTitle.value,
+						title: this.memo._memoTitle.value.split('./memo/')[1],
+						// path: '/Users/juyeonhan/repo/WebDevCurriculum/Part 3. node.js/Quest 13. Session and Login/skeleton/memo/./memo/ddd.txt' }
+						// 수정이 되지 않는 문제
 						text: this.memo._memoText.value,
 					}
+					console.log(newData)
 					return newData;
 				})
-				.then((newData) => this.currentTab.updateData(newData))
+				.then(newData => this.currentTab.updateData(newData))
 		} else {
 			fetch('http://localhost:8080/memo', {
 				headers: {
@@ -53,10 +93,12 @@ class Notepad {
 					'Content-Type': 'application/json'
 				},
 				method: 'POST',
-				body: JSON.stringify({ title, text })
+				body: JSON.stringify({ 
+					title, text
+				})
 			})
 			
-			.then((result) => {
+			.then(result => {
 				const newData = {
 					id: this.tabList.tabList.length,
 					title,
@@ -68,10 +110,10 @@ class Notepad {
 		}
 	}
 
-	render() {
-		this.tabList.render();
-		this.memo.render();
-	}
+	// render() {
+	// 	this.tabList.render();
+	// 	this.memo.render();
+	// }
 };
 
 class Memo {
@@ -93,7 +135,12 @@ class Memo {
 		})
 	}
 
+	deselectTab() {
+		this.currentTab = null;
+	}
+	
 	makeNewMemo() {
+		this.deselectTab();
 		this.memo = null;
 		this._memoTitle.value = '';
 		this._memoText.value = '';
@@ -108,6 +155,7 @@ class Memo {
 
 class TabList {
 	constructor(tabDataList) {
+		this.tabItem = document.querySelector('.list-item');
 		this.tabList = tabDataList.map(tabData => new Tab(tabData));
 		this.handleSelectTab = null;
 	}
@@ -121,6 +169,15 @@ class TabList {
 		const newTab = new Tab(tab);
 		if (this.handleSelectTab) newTab.onSelectTab(this.handleSelectTab);
 		this.tabList.push(newTab);
+	}
+
+	onSubmit(handleSubmitMemo) {
+		this.tabItem.addEventListener('click', () => {
+			handleSubmitMemo({
+				title: this._memoTitle.value.split('./memo/')[1],
+				text: this._memoText.value
+			});
+		})
 	}
 
 	// render() {
@@ -146,7 +203,8 @@ class Tab {
 		this.tabItem = document.createElement('li');
 		this.tabItem.classList.add('list-item');
 		this.tabItem.addEventListener('click', this.onSelectTab);
-		this.tabItem.textContent = this.title.split('./memo/')[1];
+		this.tabItem.addEventListener('click', this.onSubmit);
+		this.tabItem.textContent = this.title;
 		this.tabList.append(this.tabItem);
 	}
 
@@ -156,7 +214,6 @@ class Tab {
 			// 다른 탭을 누를 때 해당 탭 내용을 저장.
 			// -> 현재 탭과 id가 다른 탭을 누르면 저장함
 		})
-		
 	}
 
 	// 현재 데이터
