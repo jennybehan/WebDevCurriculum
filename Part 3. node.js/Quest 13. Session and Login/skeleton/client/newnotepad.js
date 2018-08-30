@@ -6,20 +6,24 @@ class Notepad {
 		this._submitBtn = document.querySelector('.submit-btn');
 		this.loginBtn = document.querySelector('.login-btn');
 		this.loginBtn.addEventListener('click', this.initializeLogin)
+		this.logoutBtn = document.querySelector('.logout-btn');
+		this.logoutBtn.addEventListener('click', this.logout.bind(this))
 		this.loggedIn = false;
 		this.initializeData();
 	}
-
+	
 	initializeLogin() {
 		this.loggedIn = true;
 		this.id = document.querySelector('.userId').value;
 		this.pw = document.querySelector('.userPw').value;
-		this.value = '로그아웃';
+		this.loginInfoBox = document.querySelector('.login-info');
+		this.noti = document.querySelector('.login-noti');
 
 		this.user = {
 			"id": this.id,
 			"pw": this.pw
 		}
+
 		fetch('http://localhost:8080/login', {
 			method: 'POST',
 			credentials: 'include',
@@ -27,12 +31,34 @@ class Notepad {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify(this.user)
-		})
+		}).then(res => {
+			if(res.status === 200) {
+				this.noti.textContent = `${this.user.id} 님이 로그인하셨습니다.`; 
+				this.loginInfoBox.classList.add('disable')
+			} else if (res.status === 302) {
+				window.alert('로그인 실패');
+			} else {
+				return;
+			}
+		}).catch(err => console.error(err));
 			
 	}
 
 	logout() {
 		this.loggedIn = false;
+		this.noti = document.querySelector('.login-noti');
+		this.loginInfoBox = document.querySelector('.login-info');
+		fetch('http://localhost:8080/logout', {
+			method: 'POST',
+			credentials: 'include',
+			body: JSON.stringify(this.user),
+		}).then(res => {
+			if(res.status === 200) {
+				this.noti.textContent = null;
+				this.loginInfoBox.classList.remove('disable')
+				window.location.reload();
+			}
+		}).catch(err => console.error(err));
 	}
 
 	// handleMemoSubmit() {
@@ -58,7 +84,7 @@ class Notepad {
 				this.tabList.onSelectTab(this.handleSelectTab);
 				this.memo = new Memo();
 				this.memo.onSubmit(this.handleSubmitMemo);
-			})
+			}).catch(err => console.error(err));
 		}
 		
 		
@@ -77,15 +103,15 @@ class Notepad {
 			fetch('http://localhost:8080/memo')
 				.then(() => {
 					const newData = {
-						title: this.memo._memoTitle.value.split('./memo/')[1],
-						// path: '/Users/juyeonhan/repo/WebDevCurriculum/Part 3. node.js/Quest 13. Session and Login/skeleton/memo/./memo/ddd.txt' }
-						// 수정이 되지 않는 문제
+						title: this.memo._memoTitle.value,
+						// title: this.memo._memoTitle.value.split('.txt')[0].split('./memo/')[1],
 						text: this.memo._memoText.value,
 					}
 					console.log(newData)
 					return newData;
 				})
 				.then(newData => this.currentTab.updateData(newData))
+				.catch(err => console.error(err));
 		} else {
 			fetch('http://localhost:8080/memo', {
 				headers: {
@@ -97,7 +123,6 @@ class Notepad {
 					title, text
 				})
 			})
-			
 			.then(result => {
 				const newData = {
 					id: this.tabList.tabList.length,
@@ -105,8 +130,13 @@ class Notepad {
 					text
 				}
 				this.tabList.append(newData);
-			})
-			.then(() => window.location.reload())
+			// }).then(res => {
+			// 	if(res.status === 200) {
+			// 		window.location.reload()
+			// 	}
+			}).then(
+				window.location.reload()
+			).catch(err => console.error(err));
 		}
 	}
 
@@ -166,6 +196,7 @@ class TabList {
 	}
 
 	append(tab) {
+		console.log(tab)
 		const newTab = new Tab(tab);
 		if (this.handleSelectTab) newTab.onSelectTab(this.handleSelectTab);
 		this.tabList.push(newTab);
@@ -174,7 +205,7 @@ class TabList {
 	onSubmit(handleSubmitMemo) {
 		this.tabItem.addEventListener('click', () => {
 			handleSubmitMemo({
-				title: this._memoTitle.value.split('./memo/')[1],
+				title: this._memoTitle.value,
 				text: this._memoText.value
 			});
 		})
@@ -204,7 +235,7 @@ class Tab {
 		this.tabItem.classList.add('list-item');
 		this.tabItem.addEventListener('click', this.onSelectTab);
 		this.tabItem.addEventListener('click', this.onSubmit);
-		this.tabItem.textContent = this.title;
+		this.tabItem.textContent = this.title.split('.txt')[0].split('./memo/')[1];
 		this.tabList.append(this.tabItem);
 	}
 
