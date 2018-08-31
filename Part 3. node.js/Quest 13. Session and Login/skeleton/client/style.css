@@ -144,3 +144,7 @@ input {
 form {
     display: flex;
 }
+
+.disable {
+    visibility: hidden;
+}

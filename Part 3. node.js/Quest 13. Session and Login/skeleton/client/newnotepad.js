@@ -5,8 +5,8 @@ class Notepad {
 		this.handleSubmitMemo = this.handleSubmitMemo.bind(this);
 		this._submitBtn = document.querySelector('.submit-btn');
 		this.loginBtn = document.querySelector('.login-btn');
-		this.loginBtn.addEventListener('click', this.initializeLogin)
 		this.logoutBtn = document.querySelector('.logout-btn');
+		this.loginBtn.addEventListener('click', this.initializeLogin)
 		this.logoutBtn.addEventListener('click', this.logout.bind(this))
 		this.loggedIn = false;
 		this.initializeData();
@@ -61,53 +61,57 @@ class Notepad {
 		}).catch(err => console.error(err));
 	}
 
-	// handleMemoSubmit() {
-	// 	this.domTabList = document.querySelectorAll('.list-item');
-	// 	this.domTabList.forEach((el, index) => {
-	// 		if (this.currentTab.id !== index) {
-	// 			// el.addEventListener('click', this.handleSubmitMemo)
-	// 			// this.domTabList[index].onclick = this.handleSubmitMemo();
-	// 			this.domTabList[index].addEventListener('click', this.handleSubmitMemo)
-	// 		}
-	// 	})
-	// }
-
 	initializeData() {
-		fetch('http://localhost:8080/memo')
-			.then((res) => res.json())
-			.then((result) => {
-				// id를 클라이언트에서 임시적으로 넣어줍니다.
-				result.data.map((data, index) => {
-					data.id = index;
-				})
-				this.tabList = new TabList(result.data);
-				this.tabList.onSelectTab(this.handleSelectTab);
-				this.memo = new Memo();
-				this.memo.onSubmit(this.handleSubmitMemo);
-			}).catch(err => console.error(err));
-		}
+		fetch('http://localhost:8080/memo', {
+			method: 'GET',
+			headers : { 
+				'Content-Type': 'application/json',
+				'Accept': 'application/json'
+			}
+		})
+		.then((res) => res.json())
+		.then((result) => {
+			this.tabList = new TabList(result.data);
+			this.tabList.onSelectTab(this.handleSelectTab);
+			this.memo = new Memo();
+			this.memo.onSubmit(this.handleSubmitMemo);
+		}).catch(err => console.error(err));
+	}
 		
-		
-	handleSelectTab(id) {
-		this.currentTab = this.tabList.tabList.find(tabItem => tabItem.id === id);
-		this.memo.update(this.currentTab);
-		this.currentTab.updateData(this.currentTab)
-		if (this.currentTab) {
-			this._submitBtn.value = '수정';
-		}
+	handleSelectTab(title) {
+		this.currentTab = this.tabList.tabList.find(tabItem => tabItem.title === title);
+		const fileName = this.currentTab.title;
+		fetch(`http://localhost:8080/memo/${fileName}`, {
+			method: 'GET',
+			headers : { 
+				'Content-Type': 'application/json',
+				'Accept': 'application/json'
+			}
+		})
+		.then((res) => res.json())
+		.then((result) => {
+			this.currentTab.text = result.data;
+			// id를 클라이언트에서 임시적으로 넣어줍니다.
+			// result.data.map((dataItem, index) => {
+			// 	dataItem.id = index;
+			// })
+			this.memo.update(this.currentTab);
+			this.currentTab.updateData(this.currentTab);
+			if (this.currentTab) {
+				this._submitBtn.value = '수정';
+			}
+		}).catch(err => console.error(err));	
 	}
 
 	handleSubmitMemo({ title, text }) {
-		console.log(this)
 		if (this.currentTab === null) {
 			fetch('http://localhost:8080/memo')
 				.then(() => {
 					const newData = {
 						title: this.memo._memoTitle.value,
-						// title: this.memo._memoTitle.value.split('.txt')[0].split('./memo/')[1],
 						text: this.memo._memoText.value,
 					}
-					console.log(newData)
+					console.log(newData);
 					return newData;
 				})
 				.then(newData => this.currentTab.updateData(newData))
@@ -130,20 +134,11 @@ class Notepad {
 					text
 				}
 				this.tabList.append(newData);
-			// }).then(res => {
-			// 	if(res.status === 200) {
-			// 		window.location.reload()
-			// 	}
 			}).then(
 				window.location.reload()
 			).catch(err => console.error(err));
 		}
 	}
-
-	// render() {
-	// 	this.tabList.render();
-	// 	this.memo.render();
-	// }
 };
 
 class Memo {
@@ -196,10 +191,10 @@ class TabList {
 	}
 
 	append(tab) {
-		console.log(tab)
 		const newTab = new Tab(tab);
 		if (this.handleSelectTab) newTab.onSelectTab(this.handleSelectTab);
-		this.tabList.push(newTab);
+		// console.log(this.tabList, newTab)
+		this.tabList.concat(newTab);
 	}
 
 	onSubmit(handleSubmitMemo) {
@@ -210,17 +205,14 @@ class TabList {
 			});
 		})
 	}
-
-	// render() {
-	// 	this.tabList.forEach(tab => tab.render());
-	// }
 }
 
 class Tab {
 	constructor(tabData) {
-		this.id = tabData.id;
-		this.title = tabData.title;
-		this.text = tabData.text;
+		// this.id = tabData.id;
+		// this.title = tabData.title;
+		// this.text = ;
+		this.title = tabData;
 		this.loadTabList();
 	}
 
@@ -234,16 +226,14 @@ class Tab {
 		this.tabItem = document.createElement('li');
 		this.tabItem.classList.add('list-item');
 		this.tabItem.addEventListener('click', this.onSelectTab);
-		this.tabItem.addEventListener('click', this.onSubmit);
-		this.tabItem.textContent = this.title.split('.txt')[0].split('./memo/')[1];
+		this.tabItem.addEventListener('click', this.getMemoData);
+		this.tabItem.textContent = this.title;
 		this.tabList.append(this.tabItem);
 	}
 
 	onSelectTab(handleSelectTab) {
 		this.tabItem && this.tabItem.addEventListener('click', () => {
-			handleSelectTab(this.id);
-			// 다른 탭을 누를 때 해당 탭 내용을 저장.
-			// -> 현재 탭과 id가 다른 탭을 누르면 저장함
+			handleSelectTab(this.title);
 		})
 	}
 

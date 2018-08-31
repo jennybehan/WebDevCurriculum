@@ -95,3 +95,29 @@ TODO
 4. session login(서버-클라이언트가 서로 정보를 어떤 방식으로 주고받는지 이해가 아직 부족)
 
 기타: get('/memo') 같은 식이 괜찮은가 모르겠음
+
+[Refactoring 추가]
+- path 문제
+
+// title이 서로 다르게 들어옴
+// { title: './memo/test.txt', text: '1ggg' }
+// { title: 'test222', text: 'dfdf' }
+// let fileName = data.title && data.title; // 생성 가능, 수정하면 다음과 같은 에러가 남
+//{ Error: ENOENT: no such file or directory, open '/Users/juyeonhan/repo/WebDevCurriculum/Part 3. node.js/Quest 13. Session and Login/skeleton/memo/./memo/undefined.txt.txt'
+// errno: -2,
+// code: 'ENOENT',
+// syscall: 'open',
+// path: '/Users/juyeonhan/repo/WebDevCurriculum/Part 3. node.js/Quest 13. Session and Login/skeleton/memo/./memo/undefined.txt.txt' }
+let fileName = data.title && data.title;
+
+let fileName = data.title && data.title.split('.txt')[0].split('./memo/')[1]; // 생성이 불가능, 수정이 가능
+let fileText = data.text;
+fs.writeFile(path.join(__dirname, pathName) + fileName, fileText, 'utf8', (err) => {
+	res.json({
+		"title": fileName,
+		"text": fileText,
+	})
+	if (err) {
+		console.error(err);
+	}
+})

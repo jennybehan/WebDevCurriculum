@@ -78,3 +78,6 @@
 * 비동기 : 신호를 보내고, 받는다.(무순서)
 * 블록킹 : 리턴값에 신뢰성이 있다(대신에 기다림)
 * 넌블록킹 : 리턴값은 대개 무조건 false다.(바로 리턴하는 대신, 신뢰성이 없음)
+
+### REST와 session?
+https://stackoverflow.com/questions/3521290/logout-get-or-post
