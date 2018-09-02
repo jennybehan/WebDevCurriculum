@@ -3,7 +3,7 @@ const express = require('express'),
 	  app = express(),
 	  bodyParser = require('body-parser'),
 	  fs = require('fs'),
-	  util = require('util'),
+	//   util = require('util'),
 	  session = require('express-session'),
 	  cookieParser = require('cookie-parser');
 
@@ -13,18 +13,15 @@ app.use(bodyParser.json()) // parse requests of content-type - application/json
 app.use(cookieParser());
 
 app.use(session({
-	secret: 'secretkey', // session의 암호화에 사용되는 key값
+	secret: 'secretkey',
 	name: 'sessionId',
 	resave: false, // request가 요청되었을때, 기존의 session이 존재하는 경우 다시 저장할 필요가 있는지를 확인하는 option
 	saveUninitialized: false,
-	// cookie: {
-	// 	domain: 'http://localhost:8080/',
-	// 	maxAge: 24000 * 60 * 60 // 쿠키 유효기간 24시간
-	// 	// secure: true, // https로 호출되는 경우에만 session cookie를 생성하는 option. 	
-	// }
+	cookie: {
+		maxAge: 1000 * 60 * 30
+	}
 }))
 
-// const pathName = './memo/';
 const users = [
 	{
 		userId: 'user01',
@@ -65,40 +62,27 @@ const getFileNameAsync = (pathName) => {
 }
 
 const getFileDataAsync = (filePath) => {
-	console.log(filePath)
 	return new Promise((resolve, reject) => {
 		fs.readFile(filePath, {
 			encoding: 'utf-8'
 		}, (err, data) => {
-			console.log('data: ', data)
 			if (err) reject(err);
 			else resolve(data);
 		})
 	})
 }
-// const getFileNameAsync = (pathName) => {
-// 	const readdirAsync = util.promisify(fs.readdir)
-// 	const readFileAsync = filePath => new Promise((resolve, reject) => {
-// 		fs.readFile(filePath, {
-// 			encoding: 'utf-8'
-// 		}, (err, data) => {
-// 			if (err) reject(err);
-// 			else resolve(data);
-// 		})
-// 	})
 
-// 	readdirAsync(pathName)
-// 		.then(files => Promise.all(files.map(file => 
-// 			readFileAsync(pathName + '/' + file))
-// 		).then(data => {
-// 			const fileData = {
-// 				data
-// 			}
-// 			return fileData;
-// 			// res.end(JSON.stringify(fileData))
-// 		}).catch(err => { console.error(err) })
-// 	)
-// }
+const writeFileDataAsync = (pathName, fileText) => {
+	return new Promise((resolve, reject) => {
+		console.log(pathName, fileText)
+		fs.writeFile(pathName, fileText, {
+			encoding: 'utf8'
+		}, (err) => {
+			if (err) reject(err);
+			else resolve();
+		})
+	})
+}
 
 app.post('/login', (req, res, next) => {
 	const id = req.body.id;
@@ -124,6 +108,18 @@ app.post('/logout', (req, res) => {
 	});
 })
 
+app.get('/user', (req, res) => {
+	if(req.session.username){
+		res.status(200).send(
+			JSON.stringify({
+				user: req.session.username
+			})
+		);
+	}else{
+		res.status(401).end();
+	}
+})
+
 app.get('/memo', async (req, res, next) => {
 	try {
 		// res.writeHead(200, {'Content-Type': 'application/json'});
@@ -140,42 +136,18 @@ app.get('/memo', async (req, res, next) => {
 	};
 })
 
-
-app.post('/memo', (req, res) => {
+app.post('/memo', async (req, res) => {
 	try {
-			let data = req.body;
-			let dirPath = path.join(__dirname, 'memo');
-			// let fileName = data.title && data.title;
-
-			console.log('req.body: ', req.body)
-			// console.log('fileName: ', fileName)
-
-			fs.writeFile(dirPath + fileName, fileText, 'utf8', (err) => {
-				res.json({
-					"title": fileName,
-					"text": fileText,
-				})
-				if (err) {
-					console.error(err);
-				}
-			})
+		const data = req.body.data;
+		const pathName = path.join(__dirname, 'memo');
+		const fileName = data.title;
+		await writeFileDataAsync(pathName + '/' + fileName, data.text);
+		// res.cookie(`${req.session.username}.position`, input.position);
+		res.status(200).end();
 	} catch (error) {
-		res.sendStatus(500).end();
+		console.log(error)
+		res.status(500).end();
 	}
-	
-	// let fileName = data.title && data.title;
-	
-	// let fileName = data.title && data.title.split('.txt')[0].split('./memo/')[1]; // 생성이 불가능, 수정이 가능
-	// let fileText = data.text;
-	// fs.writeFile(path.join(__dirname, pathName) + fileName, fileText, 'utf8', (err) => {
-	// 	res.json({
-	// 		"title": fileName,
-	// 		"text": fileText,
-	// 	})
-	// 	if (err) {
-	// 		console.error(err);
-	// 	}
-	// })
 })
 
 app.get('/memo/:fileName', async (req, res, next) => {
@@ -183,7 +155,7 @@ app.get('/memo/:fileName', async (req, res, next) => {
 		const pathName = path.join(__dirname, 'memo');
 		const fileName = req.params.fileName;
 		const fileData = await getFileDataAsync(pathName + '/' + fileName);
-		console.log(fileData);
+		res.cookie(`${req.session.username}.fileName`, fileName)
 		if (fileData) {
 			res.status(200).send(JSON.stringify({data: fileData}))
 		} else {
@@ -192,21 +164,7 @@ app.get('/memo/:fileName', async (req, res, next) => {
 	} catch (error) {
 		res.sendStatus(500);
 	}
-
-	// fs.readFile(path.join(__dirname, pathName, fileName), 'utf-8', (err, data) => {
-	// 	res.writeHead(200, {'Content-Type': 'application/json'});
-	// 	const fileData = {
-	// 		"title": fileName,
-	// 		"text": data
-	// 	}
-	// 	console.log('fileData: ', fileData)
-	// 	res.end(JSON.stringify(fileData));
-	// 	if (err) {
-	// 		console.log(err);
-	// 	}
-	// })
 })
-
 
 app.delete(`/memo/:fileName`, (req, res) => {
 	const fileName = req.params.fileName;
@@ -221,14 +179,3 @@ app.delete(`/memo/:fileName`, (req, res) => {
 const server = app.listen(8080, () => {
 	console.log('Server started!');
 });
-
-// app.get('/User', async function(req, res) {
-//   let users;
-//   try {
-//     users = await db.collection('User').find().toArray();
-//   } catch (error) {
-//     res.status(500).json({ error: error.toString() });
-//   }
-//   res.json({ users });
-// });
-// https://github.com/FEDevelopers/tech.description/wiki/%EC%97%90%EB%9F%AC-%EC%B2%98%EB%A6%AC%EB%A5%BC-%EC%9C%84%ED%95%9C-%EC%9D%B5%EC%8A%A4%ED%94%84%EB%A0%88%EC%8A%A4-%EA%B0%80%EC%9D%B4%EB%93%9C

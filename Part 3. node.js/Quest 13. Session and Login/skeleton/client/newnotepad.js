@@ -10,14 +10,43 @@ class Notepad {
 		this.logoutBtn.addEventListener('click', this.logout.bind(this))
 		this.loggedIn = false;
 		this.initializeData();
+		this.initializeUser();
 	}
-	
+
+	getCookie(){
+		const cookieList = document.cookie.split(';');
+		for(let i = 0; i < cookieList.length; i++){ 
+			return cookieList[i].trim().match()
+		} return null;
+	}
+
+	initializeUser() {
+		fetch('http://localhost:8080/user', {
+			method: 'GET'
+		}).then(res => {
+			if(res.status === 200) { 
+				return res.json();
+			}
+			else throw new Error();
+		}).then(result => {
+			this.noti = document.querySelector('.login-noti');
+			this.loginInfoBox = document.querySelector('.login-info');
+			this.noti.textContent = `${result.user} 님이 로그인하셨습니다.`; 
+			this.loginInfoBox.classList.add('disable')
+			this.getCookie(result.user)
+			// cookie
+			let cookie = this.getCookie();
+			console.log(cookie)
+			this.textBoard = document.querySelector('.text');
+			this.textBoard.focus();
+			// this.textBoard.setSelectionRange(startPoint, endPoint);
+		}).catch(err => console.log(err))
+	}
+
 	initializeLogin() {
 		this.loggedIn = true;
 		this.id = document.querySelector('.userId').value;
 		this.pw = document.querySelector('.userPw').value;
-		this.loginInfoBox = document.querySelector('.login-info');
-		this.noti = document.querySelector('.login-noti');
 
 		this.user = {
 			"id": this.id,
@@ -33,14 +62,19 @@ class Notepad {
 			body: JSON.stringify(this.user)
 		}).then(res => {
 			if(res.status === 200) {
-				this.noti.textContent = `${this.user.id} 님이 로그인하셨습니다.`; 
-				this.loginInfoBox.classList.add('disable')
-			} else if (res.status === 302) {
-				window.alert('로그인 실패');
-			} else {
-				return;
+				const cookieValue= this.id + ";";
+				document.cookie = "name=" + cookieValue;
+				console.log("쿠키 Cookies : " + "name=" + cookieValue);
+				// 지난 번에 열었던 메모
+				// 지난 번에 열었던 메모의 커서
+				// 메모 리스트
+				// -> 디렉토리가 따로 있어야 하나?
+				window.alert('로그인 성공')
+				return res.json();
 			}
-		}).catch(err => console.error(err));
+		})
+		.then(window.location.reload())
+		.catch(err => console.error(err));
 			
 	}
 
@@ -90,54 +124,52 @@ class Notepad {
 		})
 		.then((res) => res.json())
 		.then((result) => {
+			console.log('result:', result)
 			this.currentTab.text = result.data;
-			// id를 클라이언트에서 임시적으로 넣어줍니다.
-			// result.data.map((dataItem, index) => {
-			// 	dataItem.id = index;
-			// })
 			this.memo.update(this.currentTab);
 			this.currentTab.updateData(this.currentTab);
 			if (this.currentTab) {
 				this._submitBtn.value = '수정';
 			}
-		}).catch(err => console.error(err));	
+			
+			// this.otherTabs = this.tabList.tabList.filter(tabItem => tabItem.title !== title);
+			// if (this.otherTabs) {
+			// 	this.textBoard = document.querySelector('.text');
+			// 	this.textBoard.onkeydown = () => {
+			// 		let prevText = this.textBoard.value;
+			// 		return prevText;
+			// 	}
+			// 	this.otherTabs.map(tab => tab.tabItem.addEventListener('click', (prevText) => {
+			// 		console.log(prevText)
+			// 		this.handleSubmitMemo({
+			// 			title,
+			// 			text: prevText
+			// 		});
+			// 		this.memo.onSubmit(this.handleSubmitMemo);
+			// 	}))
+			// }
+		}).catch(err => console.error(err));
 	}
-
+	
 	handleSubmitMemo({ title, text }) {
-		if (this.currentTab === null) {
-			fetch('http://localhost:8080/memo')
-				.then(() => {
-					const newData = {
-						title: this.memo._memoTitle.value,
-						text: this.memo._memoText.value,
-					}
-					console.log(newData);
-					return newData;
-				})
-				.then(newData => this.currentTab.updateData(newData))
-				.catch(err => console.error(err));
-		} else {
-			fetch('http://localhost:8080/memo', {
-				headers: {
-					'Accept': 'application/json',
-					'Content-Type': 'application/json'
-				},
-				method: 'POST',
-				body: JSON.stringify({ 
-					title, text
-				})
-			})
-			.then(result => {
-				const newData = {
-					id: this.tabList.tabList.length,
-					title,
-					text
-				}
-				this.tabList.append(newData);
-			}).then(
-				window.location.reload()
-			).catch(err => console.error(err));
-		}
+		fetch('http://localhost:8080/memo', {
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			method: 'POST',
+			body: JSON.stringify({data: {title, text}})
+		})
+		.then(result => {
+			const newData = {
+				id: this.tabList.tabList.length,
+				title,
+				text
+			}
+			this.tabList.append(newData);
+		}).then(
+			window.location.reload()
+		).catch(err => console.error(err));
 	}
 };
 
@@ -193,7 +225,6 @@ class TabList {
 	append(tab) {
 		const newTab = new Tab(tab);
 		if (this.handleSelectTab) newTab.onSelectTab(this.handleSelectTab);
-		// console.log(this.tabList, newTab)
 		this.tabList.concat(newTab);
 	}
 
@@ -209,10 +240,7 @@ class TabList {
 
 class Tab {
 	constructor(tabData) {
-		// this.id = tabData.id;
-		// this.title = tabData.title;
-		// this.text = ;
-		this.title = tabData;
+		this.title = tabData.title ? tabData.title : tabData;
 		this.loadTabList();
 	}
 
@@ -222,15 +250,15 @@ class Tab {
 	}
 
 	loadTabList() {
-		this.tabList = document.querySelector('.tab-list ul');
+		this.tabListWrapper = document.querySelector('.tab-list ul');
 		this.tabItem = document.createElement('li');
 		this.tabItem.classList.add('list-item');
 		this.tabItem.addEventListener('click', this.onSelectTab);
 		this.tabItem.addEventListener('click', this.getMemoData);
 		this.tabItem.textContent = this.title;
-		this.tabList.append(this.tabItem);
+		this.tabListWrapper.append(this.tabItem);
 	}
-
+	
 	onSelectTab(handleSelectTab) {
 		this.tabItem && this.tabItem.addEventListener('click', () => {
 			handleSelectTab(this.title);
