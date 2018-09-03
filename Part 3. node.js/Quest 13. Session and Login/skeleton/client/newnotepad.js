@@ -39,7 +39,7 @@ class Notepad {
 			console.log(cookie)
 			this.textBoard = document.querySelector('.text');
 			this.textBoard.focus();
-			// this.textBoard.setSelectionRange(startPoint, endPoint);
+			this.textBoard.setSelectionRange(startPoint, endPoint);
 		}).catch(err => console.log(err))
 	}
 
@@ -132,22 +132,18 @@ class Notepad {
 			}
 			return this.currentTab.text;
 		}).then(() => {
-			this.otherTabs = this.tabList.tabList.filter(tabItem => tabItem.title !== title);
-			if (this.otherTabs) {
-				this.otherTabs.map(tab => tab.tabItem.addEventListener('click', () => {
-					const textBoard = document.querySelector('.text');
-					const text = textBoard.value;
-					fetch(`http://localhost:8080/memo/${fileName}`, {
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/json',
-							'Accept': 'application/json'
-						},
-						body: JSON.stringify({data: {title, text}})
-					})
-					.then(result => console.log(result))
-					.catch(err => console.error(err))
-				}))
+			const newData = document.querySelector('.text');
+			newData.onkeydown = () => {
+				fetch(`http://localhost:8080/memo/${fileName}`, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'Accept': 'application/json'
+					},
+					body: JSON.stringify({data: {title, text: newData.value}})
+				})
+				// .then()
+				.catch(err => console.error(err))
 			}
 		})
 		.catch(err => console.error(err));
