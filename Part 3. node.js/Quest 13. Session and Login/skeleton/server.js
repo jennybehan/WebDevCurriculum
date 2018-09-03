@@ -43,7 +43,9 @@ app.get('/', (req, res) => {
 
 app.get('/login', (req, res) => {
 	const session = req.session;
-	if (req.session) {
+	const cookie = req.cookie;
+	console.log(cookie)
+	if (session) {
 		console.log(req.session)
 	}
 })
@@ -74,7 +76,6 @@ const getFileDataAsync = (filePath) => {
 
 const writeFileDataAsync = (pathName, fileText) => {
 	return new Promise((resolve, reject) => {
-		console.log(pathName, fileText)
 		fs.writeFile(pathName, fileText, {
 			encoding: 'utf8'
 		}, (err) => {
@@ -122,10 +123,8 @@ app.get('/user', (req, res) => {
 
 app.get('/memo', async (req, res, next) => {
 	try {
-		// res.writeHead(200, {'Content-Type': 'application/json'});
 		const pathName = path.join(__dirname, 'memo');
 		const fileName = await getFileNameAsync(pathName);
-
 		if (fileName) {
 			res.status(200).send(JSON.stringify({data: fileName}));
 		} else {

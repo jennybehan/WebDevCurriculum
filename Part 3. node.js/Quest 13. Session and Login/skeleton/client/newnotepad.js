@@ -129,24 +129,27 @@ class Notepad {
 			this.currentTab.updateData(this.currentTab);
 			if (this.currentTab) {
 				this._submitBtn.value = '수정';
-			}
-			return this.currentTab.text;
-		}).then(() => {
-			const newData = document.querySelector('.text');
-			newData.onkeydown = () => {
-				fetch(`http://localhost:8080/memo/${fileName}`, {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-						'Accept': 'application/json'
-					},
-					body: JSON.stringify({data: {title, text: newData.value}})
-				})
-				// .then()
-				.catch(err => console.error(err))
+				this.saveSelectTabData(this.currentTab)
 			}
 		})
 		.catch(err => console.error(err));
+	}
+
+	saveSelectTabData(prevTab) {
+		const textBox = document.querySelector('.text'); // 변경된 값을 저장해주는 시점
+		const newData = {
+			title: prevTab.title,
+			text: textBox.value 
+		}
+		fetch(`http://localhost:8080/memo/${newData.title}`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'Accept': 'application/json'
+				},
+				body: JSON.stringify({data: newData})
+			})
+			.catch(err => console.error(err))
 	}
 	
 	handleSubmitMemo({ title, text }) {
@@ -200,6 +203,7 @@ class Memo {
 		this._memoTitle.value = '';
 		this._memoText.value = '';
 		this._submitBtn.value = '노트 등록';
+		
 	}
 
 	update({ title, text }) {
