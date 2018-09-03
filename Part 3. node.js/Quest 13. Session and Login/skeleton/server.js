@@ -150,6 +150,21 @@ app.post('/memo', async (req, res) => {
 	}
 })
 
+app.post('/memo/:fileName', async (req, res) => {
+	try {
+		const data = req.body.data;
+		console.log(data)
+		const pathName = path.join(__dirname, 'memo');
+		const fileName = data.title;
+		await writeFileDataAsync(pathName + '/' + fileName, data.text);
+		// res.cookie(`${req.session.username}.position`, input.position);
+		res.status(200).end();
+	} catch (error) {
+		console.log(error)
+		res.status(500).end();
+	}
+})
+
 app.get('/memo/:fileName', async (req, res, next) => {
 	try {
 		const pathName = path.join(__dirname, 'memo');

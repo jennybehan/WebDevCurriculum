@@ -124,40 +124,42 @@ class Notepad {
 		})
 		.then((res) => res.json())
 		.then((result) => {
-			console.log('result:', result)
 			this.currentTab.text = result.data;
 			this.memo.update(this.currentTab);
 			this.currentTab.updateData(this.currentTab);
 			if (this.currentTab) {
 				this._submitBtn.value = '수정';
 			}
-			
-			// this.otherTabs = this.tabList.tabList.filter(tabItem => tabItem.title !== title);
-			// if (this.otherTabs) {
-			// 	this.textBoard = document.querySelector('.text');
-			// 	this.textBoard.onkeydown = () => {
-			// 		let prevText = this.textBoard.value;
-			// 		return prevText;
-			// 	}
-			// 	this.otherTabs.map(tab => tab.tabItem.addEventListener('click', (prevText) => {
-			// 		console.log(prevText)
-			// 		this.handleSubmitMemo({
-			// 			title,
-			// 			text: prevText
-			// 		});
-			// 		this.memo.onSubmit(this.handleSubmitMemo);
-			// 	}))
-			// }
-		}).catch(err => console.error(err));
+			return this.currentTab.text;
+		}).then(() => {
+			this.otherTabs = this.tabList.tabList.filter(tabItem => tabItem.title !== title);
+			if (this.otherTabs) {
+				this.otherTabs.map(tab => tab.tabItem.addEventListener('click', () => {
+					const textBoard = document.querySelector('.text');
+					const text = textBoard.value;
+					fetch(`http://localhost:8080/memo/${fileName}`, {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+							'Accept': 'application/json'
+						},
+						body: JSON.stringify({data: {title, text}})
+					})
+					.then(result => console.log(result))
+					.catch(err => console.error(err))
+				}))
+			}
+		})
+		.catch(err => console.error(err));
 	}
 	
 	handleSubmitMemo({ title, text }) {
 		fetch('http://localhost:8080/memo', {
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
 			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'Accept': 'application/json'
+			},
 			body: JSON.stringify({data: {title, text}})
 		})
 		.then(result => {
@@ -262,6 +264,7 @@ class Tab {
 	onSelectTab(handleSelectTab) {
 		this.tabItem && this.tabItem.addEventListener('click', () => {
 			handleSelectTab(this.title);
+			this.tabList = document.querySelectorAll('.list-item');
 		})
 	}
 
