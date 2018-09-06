@@ -16,7 +16,6 @@ class Notepad {
             if (memoDom) {
                 memoDom.parentNode.removeChild(memoDom);
             }
-            console.log(e.detail.memo)
             this.dom.appendChild(e.detail.memo.dom)
         })
     }
@@ -44,8 +43,11 @@ class TabList {
             console.log(result.data)
 			result.data.map((dataItem, index) => {
                 const data = new Tab(index, dataItem)
+                console.log('data: ', data)
                 this.tabs.push(data);
                 this.tabs.map(tab => {
+                    document.querySelector('.memo .title').value = tab.title;
+                    document.querySelector('.memo .content').value = tab.memo.content;
                     this.dom.querySelector('.tabs').appendChild(tab.dom);
                 })
             })
@@ -65,11 +67,9 @@ class TabList {
     addTab() {
         const newMemoBtn = this.dom.querySelector('.newmemo-btn');
         newMemoBtn.addEventListener('click', () => {
-            console.log(this)
             const newTab = new Tab(this._tabIndex++);
             // * 새로운 탭 Node 추가와 dom 추가
             this.tabs.push(newTab); // this.tabs.concat(newTab);
-            console.log(this.tabs, newTab)
             this.dom.querySelector('.tabs').appendChild(newTab.dom);
 
             newTab.dom.addEventListener('unselectAll', () => {
@@ -87,8 +87,10 @@ class TabList {
         }))
 
         this.memo.dom.addEventListener('changeTitle', (e) => {
-            console.log(e)
-        })
+            this.title = e.detail.title;
+            console.log('e: ', e)
+            this.dom.querySelector('.title').textContent = this.title;
+        });
     }
 
     // 3. tab 제거 이벤트 버블링 받아오기 : eventTarget이 this.dom임!
@@ -123,14 +125,25 @@ class Tab {
     }
 
     _bindEvents() {
-        this._removeTab();
+        this._removeData();
         this._loadNotePad();
     }
 
     // 1. x 버튼 누르면 tab 삭제
-    _removeTab() {
+    _removeData() {
         const removeTab = this.dom.querySelector('.removetab-btn');
         removeTab.addEventListener('click', () => {
+            fetch(`http://localhost:8080/memo/${this.title}`, {
+		    	method: 'DELETE',
+		    	headers: { 
+		    		'Content-Type': 'application/json',
+		    		'Accept': 'application/json'
+                },
+                body: JSON.stringify({data: {
+                        title: this.title, 
+                    }
+                })
+            })
             // tabs 배열에서도 없애야 함 -> event bubbling
             // node 삭제와 dom 삭제 모두 이벤트 버블링으로 tabList로 보내서 처리
             this.dom.dispatchEvent(new CustomEvent('closeTab', {
@@ -148,69 +161,43 @@ class Tab {
 
             this.loadMemo();
             this.loadTitle();
+            this._saveContent();
         })
     }
 
     loadMemo() {
+        // 저장되어 있는 애를 가져와야 함
+
         this.dom.dispatchEvent(new CustomEvent('loadMemo', {
             bubbles: true,
-            detail: { memo: this.memo }
+            detail: { memo: this.memo || this.memo.content }
+			// detail: { memo: this.memo }
+            // detail: { memo: this.memo.content || this.memo }
         }))
     }
 
     loadTitle() {
         this.memo.dom.addEventListener('changeTitle', (e) => {
-            this.title = e.detail.title;
-            this.dom.querySelector('.title').textContent = this.title;
-        })
-    }
-}
-
-class Memo {
-    constructor(content) {
-        this.content = content || '';
-        this._initDom();
-        this._bindEvents();
-    }
-
-    _initDom() {
-        this.dom = document.querySelector('.main .memo').cloneNode(true);
-    }
-
-    _bindEvents() {
-        this.setTitle();
-        this.setContent();
-        this._saveContent();
-    }
-
-    setTitle() {
-        const titleArea = this.dom.querySelector('.title');
-        titleArea.addEventListener('blur', () => {
-            this.dom.dispatchEvent(new CustomEvent('changeTitle', {
-                bubbles: true,
-                detail: { title: titleArea.value }
-            }))
-        })
-    }
-
-    setContent() {
-        const contentArea = this.dom.querySelector('.content');
-        contentArea.addEventListener('blur', () => {
-            this.content = contentArea.value;
+            this.title = e.detail.title || this.title;
+            // this.dom.querySelector('.title').textContent = this.title;
+            // this.title = e.detail.title;
+			this.dom.querySelector('.title').innerHTML = this.title;
         })
     }
 
     _saveContent() {
-        const titleArea = this.dom.querySelector('.title');
-        this.dom.querySelector('.submit-btn').addEventListener('click', () => {
+        const titleArea = document.querySelector('.memo .title');
+        document.querySelector('.submit-btn').addEventListener('click', () => {
+            console.log(this)
             this.saveMemo({
                 title: titleArea.value,
-                content: this.content
+                content: this.memo.content
             })
         })
     }
 
     saveMemo({title, content}) {
+        console.log(title, content)
         fetch('http://localhost:8080/memo', {
 			method: 'POST',
 			headers: {
@@ -228,10 +215,45 @@ class Memo {
 				title,
 				content
             }
-			// this.tabList.append(newData)
 		}).then(
-			// this.memo.update({ title, text })
+			// memo가 업데이트 되어야 함
 		).catch(err => console.error(err));
+    }
+}
+
+class Memo {
+    constructor(content) {
+        this.content = content || '';
+        this._initDom();
+        this._bindEvents();
+    }
+
+    _initDom() {
+        this.dom = document.querySelector('.main .memo').cloneNode(true);
+    }
+
+    _bindEvents() {
+        this.setTitle();
+        this.setContent();
+    }
+
+    setTitle() {
+        const titleArea = this.dom.querySelector('.title');
+        titleArea.addEventListener('blur', () => {
+            this.dom.dispatchEvent(new CustomEvent('changeTitle', {
+                bubbles: true,
+                detail: { title: titleArea.value }
+            }))
+            // this._saveContent();
+        })
+    }
+
+    setContent() {
+        const contentArea = this.dom.querySelector('.content');
+        contentArea.addEventListener('blur', () => {
+            this.content = contentArea.value;
+            // this._saveContent();
+        })
     }
 }
 

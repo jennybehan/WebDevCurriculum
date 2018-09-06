@@ -75,7 +75,7 @@ input {
 }
 
 .selected {
-    background-color: #f9f9f9;
+    background-color: #fab0b0;
 }
 .visible {
     visibility: visible;
