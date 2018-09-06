@@ -126,11 +126,21 @@ app.get('/memo', async (req, res, next) => {
 		const pathName = path.join(__dirname, 'memo');
 		const fileName = await getFileNameAsync(pathName);
 		if (fileName) {
-			res.status(200).send(JSON.stringify({data: fileName}));
+			const data = fileName.map(
+				(title, index) => {
+					const data = {
+						title,
+						content: fs.readFileSync(pathName + '/' + title).toString(),
+						// id: index
+					}
+					return data
+				})
+				res.status(200).send(JSON.stringify({data}));
 		} else {
 			next()
 		}
 	} catch (error) {
+		console.log(error)
 		res.sendStatus(500);
 	};
 })
@@ -140,7 +150,7 @@ app.post('/memo', async (req, res) => {
 		const data = req.body.data;
 		const pathName = path.join(__dirname, 'memo');
 		const fileName = data.title;
-		await writeFileDataAsync(pathName + '/' + fileName, data.text);
+		await writeFileDataAsync(pathName + '/' + fileName, data.content);
 		// res.cookie(`${req.session.username}.position`, input.position);
 		res.status(200).end();
 	} catch (error) {
@@ -155,30 +165,31 @@ app.post('/memo/:fileName', async (req, res) => {
 		console.log(data)
 		const pathName = path.join(__dirname, 'memo');
 		const fileName = data.title;
-		await writeFileDataAsync(pathName + '/' + fileName, data.text);
+		await writeFileDataAsync(pathName + '/' + fileName, data.content);
 		// res.cookie(`${req.session.username}.position`, input.position);
 		res.status(200).end();
 	} catch (error) {
-		console.log(error)
+		console.log('error: ', error)
 		res.status(500).end();
 	}
 })
 
-app.get('/memo/:fileName', async (req, res, next) => {
-	try {
-		const pathName = path.join(__dirname, 'memo');
-		const fileName = req.params.fileName;
-		const fileData = await getFileDataAsync(pathName + '/' + fileName);
-		res.cookie(`${req.session.username}.fileName`, fileName)
-		if (fileData) {
-			res.status(200).send(JSON.stringify({data: fileData}))
-		} else {
-			next();
-		}
-	} catch (error) {
-		res.sendStatus(500);
-	}
-})
+// app.get('/memo/:fileName', async (req, res, next) => {
+// 	try {
+// 		const pathName = path.join(__dirname, 'memo');
+// 		const fileName = req.params.fileName;
+// 		const fileData = await getFileDataAsync(pathName + '/' + fileName);
+// 		console.log(fileData)
+// 		// res.cookie(`${req.session.username}.fileName`, fileName)
+// 		if (fileName) {
+// 			res.status(200).send(JSON.stringify({data: fileData}))
+// 		} else {
+// 			next();
+// 		}
+// 	} catch (error) {
+// 		res.sendStatus(500);
+// 	}
+// })
 
 app.delete(`/memo/:fileName`, (req, res) => {
 	const fileName = req.params.fileName;
