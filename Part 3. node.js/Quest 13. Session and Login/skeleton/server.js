@@ -162,7 +162,6 @@ app.post('/memo', async (req, res) => {
 app.post('/memo/:fileName', async (req, res) => {
 	try {
 		const data = req.body.data;
-		console.log(data)
 		const pathName = path.join(__dirname, 'memo');
 		const fileName = data.title;
 		await writeFileDataAsync(pathName + '/' + fileName, data.content);
@@ -192,9 +191,9 @@ app.post('/memo/:fileName', async (req, res) => {
 // })
 
 app.delete(`/memo/:fileName`, (req, res) => {
+	const pathName = path.join(__dirname, 'memo');
 	const fileName = req.params.fileName;
-
-	fs.unlink(pathName + fileName, (err) => {
+	fs.unlink(pathName + '/' + fileName, (err) => {
 		if (err) throw err;
 		console.log('deleted')
 	})
