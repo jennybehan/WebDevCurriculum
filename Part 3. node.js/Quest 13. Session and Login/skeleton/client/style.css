@@ -47,7 +47,12 @@ body {
     font-weight: 400;
 }
 
-.wrapper {
+textarea,
+input {
+	outline: none;
+}
+
+.main {
     display: flex;
     flex-flow: column;
     position: relative;
@@ -58,16 +63,20 @@ body {
     justify-content: center;
 }
 
-.memo-board-wrapper {
-    margin: 2rem 0;
-}
-
-.memo-board-new {
+.memo {
     display: flex;
     flex-flow: column;
+    margin: 0 auto;
     width: 50%;
+} 
+
+.template {
+    display: none;
 }
 
+.selected {
+    background-color: #f9f9f9;
+}
 .visible {
     visibility: visible;
 }
@@ -76,49 +85,51 @@ nav {
     width: 100%;
     margin: 0 auto;
     padding: 20px;
+    display: flex;
     border-bottom: 1px solid #aaa;
     border-top: 1px solid #aaa;
 }
 
-.list-item {
-    padding: 0 10px;
+.tab {
+    padding: 10px;
     display: inline-block;
+    min-width: 150px;
+    border: 1px solid #aaa;
 }
 
-.list-item:hover {
+.tab:hover {
     cursor: pointer;
     opacity: 0.7;
 }
 
-textarea,
-input {
-	outline: none;
+.tab .title {
+    display: inline-block;   
 }
 
-.text,
-.title {
+.content,
+.memo .title {
 	border-radius: 3px;
     background-color: #f9f9f9;
     border: 1px solid #ddd;
 }
 
-.text,
-.title {
-    width: 40%;
-    margin: 1rem auto;
+.memo .title {
+    line-height: 30px;
+    max-width: 300px;
+    margin: 0 auto;
 }
 
-.text,
-.title {
+.memo .content {
+    margin: 1rem auto;
     overflow-y: scroll;
     font-size: 22px;
 }
 
-.title {
+/* .title {
     margin: 1rem auto 0;
-}
+} */
 
-.text {
+.content {
     height: 500px;
     width: 60%;
     padding: 10px;
@@ -130,11 +141,16 @@ input {
 
 .submit-btn,
 .update-btn,
-.newmemo-btn {
+.newmemo-btn,
+.removetab-btn {
 	border: none;
 	padding: 5px 10px;
     border-radius: 2px;
     background-color: #f8ebe7;
+}
+
+.removetab-btn {
+    float: right;
 }
 
 .login {
