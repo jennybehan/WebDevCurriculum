@@ -40,14 +40,11 @@ class TabList {
 		})
 		.then((res) => res.json())
 		.then((result) => {
-            console.log(result.data)
 			result.data.map((dataItem, index) => {
                 const data = new Tab(index, dataItem)
-                console.log('data: ', data)
                 this.tabs.push(data);
-                this.tabs.map(tab => {
-                    document.querySelector('.memo .title').value = tab.title;
-                    document.querySelector('.memo .content').value = tab.memo.content;
+                this.tabs.map((tab, index) => {
+                    document.querySelector('.title').textContent = tab.title;
                     this.dom.querySelector('.tabs').appendChild(tab.dom);
                 })
             })
@@ -63,49 +60,33 @@ class TabList {
         this.removeTab();
     }
     
-    // 1. + 버튼 누르면 tab 추가
     addTab() {
         const newMemoBtn = this.dom.querySelector('.newmemo-btn');
         newMemoBtn.addEventListener('click', () => {
             const newTab = new Tab(this._tabIndex++);
-            // * 새로운 탭 Node 추가와 dom 추가
             this.tabs.push(newTab); // this.tabs.concat(newTab);
             this.dom.querySelector('.tabs').appendChild(newTab.dom);
 
-            newTab.dom.addEventListener('unselectAll', () => {
+            newTab.dom.addEventListener('unselectAll', () => { // 기존 탭에도 넣어야 함
                 this.tabs.forEach(tab => {
                     tab.dom.classList.remove('selected'); // 모두 적용
                 })
             })
         })
     }
-    // 2. tab 누르면 메모 로드
-    loadMemo() {
-        this.dom.dispatchEvent(new CustomEvent('loadMemo', {
-            bubbles: true,
-            detail: { memo: this.memo }
-        }))
 
-        this.memo.dom.addEventListener('changeTitle', (e) => {
-            this.title = e.detail.title;
-            console.log('e: ', e)
-            this.dom.querySelector('.title').textContent = this.title;
-        });
-    }
-
-    // 3. tab 제거 이벤트 버블링 받아오기 : eventTarget이 this.dom임!
     removeTab() {
         this.dom.addEventListener('closeTab', (e) => {
             const targetTab = e.detail.tab;
             let targetIdx;
 
-            this.tabs.forEach((tab) => {
+            this.tabs.forEach((tab, idx) => {
                 if (tab.index === targetTab.index) {
-                    targetIdx = tab.index;
+                    targetIdx = idx;
                 }
             })
             this.tabs.splice(targetIdx, 1); // 배열에서 지우기
-            targetTab.dom.parentNode.removeChild(targetTab.dom); // ***
+            targetTab.dom.parentNode.removeChild(targetTab.dom);
         })
     }
 }
@@ -156,48 +137,44 @@ class Tab {
     // 2. title, memo 로드
     _loadNotePad() {
         this.dom.addEventListener('click', () => {
-            this.dom.dispatchEvent(new CustomEvent('unselectAll')); // 전체에 선택되었다는 것 뺌
+            this.dom.dispatchEvent(new CustomEvent('unselectAll'));
             this.dom.classList.add('selected');
 
             this.loadMemo();
             this.loadTitle();
-            this._saveContent();
+            this._saveContent(this.index);
         })
     }
 
     loadMemo() {
-        // 저장되어 있는 애를 가져와야 함
-
         this.dom.dispatchEvent(new CustomEvent('loadMemo', {
             bubbles: true,
             detail: { memo: this.memo || this.memo.content }
-			// detail: { memo: this.memo }
-            // detail: { memo: this.memo.content || this.memo }
         }))
     }
 
     loadTitle() {
+        const titleArea = document.querySelector('.memo .title');
+        titleArea.value = this.title;
         this.memo.dom.addEventListener('changeTitle', (e) => {
             this.title = e.detail.title || this.title;
-            // this.dom.querySelector('.title').textContent = this.title;
-            // this.title = e.detail.title;
 			this.dom.querySelector('.title').innerHTML = this.title;
         })
     }
 
-    _saveContent() {
+    _saveContent(index) {
         const titleArea = document.querySelector('.memo .title');
         document.querySelector('.submit-btn').addEventListener('click', () => {
-            console.log(this)
+            console.log(this.index)
             this.saveMemo({
+                index,
                 title: titleArea.value,
                 content: this.memo.content
             })
         })
     }
 
-    saveMemo({title, content}) {
-        console.log(title, content)
+    saveMemo({index, title, content}) {
         fetch('http://localhost:8080/memo', {
 			method: 'POST',
 			headers: {
@@ -211,7 +188,7 @@ class Tab {
 		})
 		.then(result => {
 			const newData = {
-				// id: this.tabList.tabList.length,
+				index,
 				title,
 				content
             }
@@ -244,15 +221,17 @@ class Memo {
                 bubbles: true,
                 detail: { title: titleArea.value }
             }))
-            // this._saveContent();
         })
     }
 
     setContent() {
         const contentArea = this.dom.querySelector('.content');
+        // 원래 데이터가 있는 경우 초기값은 불러와야 함
+        if (this.content) {
+            contentArea.value = this.content;
+        }
         contentArea.addEventListener('blur', () => {
             this.content = contentArea.value;
-            // this._saveContent();
         })
     }
 }

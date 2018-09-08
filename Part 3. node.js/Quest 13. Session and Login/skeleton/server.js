@@ -131,7 +131,7 @@ app.get('/memo', async (req, res, next) => {
 					const data = {
 						title,
 						content: fs.readFileSync(pathName + '/' + title).toString(),
-						// id: index
+						id: index
 					}
 					return data
 				})
@@ -192,7 +192,7 @@ app.post('/memo/:fileName', async (req, res) => {
 
 app.delete(`/memo/:fileName`, (req, res) => {
 	const pathName = path.join(__dirname, 'memo');
-	const fileName = req.params.fileName;
+	const fileName = req.params.fileName || 'title';
 	fs.unlink(pathName + '/' + fileName, (err) => {
 		if (err) throw err;
 		console.log('deleted')
