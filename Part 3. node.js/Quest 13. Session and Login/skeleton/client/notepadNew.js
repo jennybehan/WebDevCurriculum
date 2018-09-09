@@ -4,6 +4,7 @@ class Notepad {
         this.tabList = new TabList()
         this._initDom();
         this._bindEvents();
+        this._initLogin();
     }
 
     _initDom() {
@@ -248,5 +249,80 @@ class Memo {
 }
 
 class Login {
+    constructor() {
+        this._initUser();
+        this._bindEvents();
+    }
     
+    _bindEvents() {
+        this._initLogin();
+    }
+
+    _initUser() {
+        fetch('/user', {
+            method: 'GET'
+        }).then(res => {
+            if(res.status === 200) { 
+                return res.json();
+            }
+            else throw new Error();
+        }).then(result => {
+            this.noti = document.querySelector('.login-noti');
+            this.loginInfoBox = document.querySelector('.login-info');
+            this.noti.textContent = `${result.user} 님이 로그인하셨습니다.`; 
+            this.loginInfoBox.classList.add('disable')
+            this.getCookie(result.user)
+            let cookie = this.getCookie();
+            console.log(cookie)
+            // this.textBoard = document.querySelector('.text');
+            // this.textBoard.focus();
+            // this.textBoard.setSelectionRange(startPoint, endPoint);
+        }).catch(err => console.log(err))
+    }
+
+    _initLogin() {
+        this.id = document.querySelector('.userId').value;
+		this.pw = document.querySelector('.userPw').value;
+
+		this.user = {
+			"id": this.id,
+			"pw": this.pw
+		}
+
+		fetch('/login', {
+			method: 'POST',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(this.user)
+		}).then(res => {
+			if(res.status === 200) {
+				const cookieValue= this.id + ";";
+				document.cookie = "name=" + cookieValue;
+				console.log("쿠키 Cookies : " + "name=" + cookieValue);
+				window.alert('로그인 성공')
+				return res.json();
+			}
+		})
+		.then(window.location.reload())
+		.catch(err => console.error(err));
+    }
+
+    _logout() {
+		this.loggedIn = false;
+		this.noti = document.querySelector('.login-noti');
+		this.loginInfoBox = document.querySelector('.login-info');
+		fetch('/logout', {
+			method: 'POST',
+			credentials: 'include',
+			body: JSON.stringify(this.user),
+		}).then(res => {
+			if(res.status === 200) {
+				this.noti.textContent = null;
+				this.loginInfoBox.classList.remove('disable')
+				window.location.reload();
+			}
+		}).catch(err => console.error(err));        
+    }
 }
