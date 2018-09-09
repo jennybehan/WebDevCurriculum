@@ -37,6 +37,17 @@ const users = [
 	}
 ]
 
+app.use((req, res, next) => {
+	fs.readdir(__dirname + '/memo', (err)=>{
+		if(err) {
+			fs.mkdir(__dirname + '/memo',(err)=>{
+				if(err) console.error(err);
+			});
+		}
+	});
+	next();
+})
+
 app.get('/', (req, res) => {
 	res.sendFile(path.join(__dirname, 'index.html'));
 })
@@ -57,7 +68,7 @@ const findUser = (userId, userPw) => {
 const getFileNameAsync = (pathName) => {
 	return new Promise((resolve, reject) => {
 		fs.readdir(pathName, (err, data) => {
-			if(err) reject(Err);
+			if(err) reject(err);
 			else resolve(data);
 		})
 	})
@@ -68,6 +79,7 @@ const getFileDataAsync = (filePath) => {
 		fs.readFile(filePath, {
 			encoding: 'utf-8'
 		}, (err, data) => {
+			console.log('data: ', data)
 			if (err) reject(err);
 			else resolve(data);
 		})
@@ -77,7 +89,7 @@ const getFileDataAsync = (filePath) => {
 const writeFileDataAsync = (pathName, fileText) => {
 	return new Promise((resolve, reject) => {
 		fs.writeFile(pathName, fileText, {
-			encoding: 'utf8'
+			encoding: 'utf8',
 		}, (err) => {
 			if (err) reject(err);
 			else resolve();
@@ -105,7 +117,6 @@ app.post('/logout', (req, res) => {
 	res.clearCookie('secretkey');
 	req.session.destroy(() => {
 		res.status(200).redirect('/');
-		// res.status(200).end()와 차이?
 	});
 })
 
@@ -124,18 +135,16 @@ app.get('/user', (req, res) => {
 app.get('/memo', async (req, res, next) => {
 	try {
 		const pathName = path.join(__dirname, 'memo');
-		const fileName = await getFileNameAsync(pathName);
-		if (fileName) {
-			const data = fileName.map(
-				(title, index) => {
-					const data = {
-						title,
-						content: fs.readFileSync(pathName + '/' + title).toString(),
-						id: index
-					}
+		const fileNames = await getFileNameAsync(pathName);
+		if (fileNames) {
+			const data = fileNames.map(
+				fileName => {
+					const content = fs.readFileSync(pathName + '/' + fileName).toString();
+					const data = JSON.parse(content);
+					console.log('GET memo data: ', data)
 					return data
 				})
-				res.status(200).send(JSON.stringify({data}));
+			res.status(200).send({data});
 		} else {
 			next()
 		}
@@ -147,10 +156,12 @@ app.get('/memo', async (req, res, next) => {
 
 app.post('/memo', async (req, res) => {
 	try {
-		const data = req.body.data;
+		const data = req.body;
+		console.log('POST memo data: ', req.body)
 		const pathName = path.join(__dirname, 'memo');
-		const fileName = data.title;
-		await writeFileDataAsync(pathName + '/' + fileName, data.content);
+		const fileName = data._id; // changed
+		
+		await writeFileDataAsync(pathName + '/' + fileName + '.json', JSON.stringify(data));
 		// res.cookie(`${req.session.username}.position`, input.position);
 		res.status(200).end();
 	} catch (error) {
@@ -159,41 +170,12 @@ app.post('/memo', async (req, res) => {
 	}
 })
 
-app.post('/memo/:fileName', async (req, res) => {
-	try {
-		const data = req.body.data;
-		const pathName = path.join(__dirname, 'memo');
-		const fileName = data.title;
-		await writeFileDataAsync(pathName + '/' + fileName, data.content);
-		// res.cookie(`${req.session.username}.position`, input.position);
-		res.status(200).end();
-	} catch (error) {
-		console.log('error: ', error)
-		res.status(500).end();
-	}
-})
-
-// app.get('/memo/:fileName', async (req, res, next) => {
-// 	try {
-// 		const pathName = path.join(__dirname, 'memo');
-// 		const fileName = req.params.fileName;
-// 		const fileData = await getFileDataAsync(pathName + '/' + fileName);
-// 		console.log(fileData)
-// 		// res.cookie(`${req.session.username}.fileName`, fileName)
-// 		if (fileName) {
-// 			res.status(200).send(JSON.stringify({data: fileData}))
-// 		} else {
-// 			next();
-// 		}
-// 	} catch (error) {
-// 		res.sendStatus(500);
-// 	}
-// })
-
 app.delete(`/memo/:fileName`, (req, res) => {
 	const pathName = path.join(__dirname, 'memo');
+	console.log(req.params)
 	const fileName = req.params.fileName || 'title';
-	fs.unlink(pathName + '/' + fileName, (err) => {
+	
+	fs.unlink(pathName + '/' + fileName + '.json', (err) => {
 		if (err) throw err;
 		console.log('deleted')
 	})

@@ -18,20 +18,32 @@ class Notepad {
             }
             this.dom.appendChild(e.detail.memo.dom)
         })
+
+        this.dom.addEventListener('unselectAll', (e) => {
+            const tabsDom = this.dom.querySelectorAll('.tabs .tab')
+            tabsDom.forEach(tab => {
+                tab.classList.remove('selected');
+            });
+        })
+    }
+
+    _initLogin() {
+        document.querySelector('.login-btn').addEventListener('click', () => {
+            new Login();
+        })
     }
 }
 
 class TabList {
     constructor() {
         this.tabs = [];
-        this._tabIndex = 0;
         this._initDom();
         this._initData();
         this._bindEvents();
     }
 
     _initData() {
-		fetch('http://localhost:8080/memo', {
+		fetch('/memo', {
 			method: 'GET',
 			headers : { 
 				'Content-Type': 'application/json',
@@ -40,16 +52,16 @@ class TabList {
 		})
 		.then((res) => res.json())
 		.then((result) => {
-			result.data.map((dataItem, index) => {
-                const data = new Tab(index, dataItem)
+			result.data.map(dataItem => {
+                const data = new Tab(dataItem)
                 this.tabs.push(data);
-                this.tabs.map((tab, index) => {
+                this.tabs.map(tab => {
                     document.querySelector('.title').textContent = tab.title;
                     this.dom.querySelector('.tabs').appendChild(tab.dom);
                 })
             })
 		}).catch(err => console.error(err));
-	}
+    }
 
     _initDom() {
         this.dom = document.querySelector('.template .tab-list').cloneNode(true); // cloneNode 안하고 그냥 하는 것과의 차이?
@@ -63,13 +75,13 @@ class TabList {
     addTab() {
         const newMemoBtn = this.dom.querySelector('.newmemo-btn');
         newMemoBtn.addEventListener('click', () => {
-            const newTab = new Tab(this._tabIndex++);
-            this.tabs.push(newTab); // this.tabs.concat(newTab);
+            const newTab = new Tab();
+            this.tabs.push(newTab);
             this.dom.querySelector('.tabs').appendChild(newTab.dom);
 
             newTab.dom.addEventListener('unselectAll', () => { // 기존 탭에도 넣어야 함
                 this.tabs.forEach(tab => {
-                    tab.dom.classList.remove('selected'); // 모두 적용
+                    tab.dom.classList.remove('selected');
                 })
             })
         })
@@ -92,8 +104,8 @@ class TabList {
 }
 
 class Tab {
-    constructor(index, data) {
-        this.index = index;
+    constructor(data) {
+        this._id = data ? data._id : Math.random().toString(36).substr(2, 9);
         this.title = data ? data.title : 'title'
         this._initDom();
         this._bindEvents();
@@ -107,26 +119,23 @@ class Tab {
 
     _bindEvents() {
         this._removeData();
-        this._loadNotePad();
+        this._loadNotePad(this._id);
     }
 
     // 1. x 버튼 누르면 tab 삭제
     _removeData() {
         const removeTab = this.dom.querySelector('.removetab-btn');
         removeTab.addEventListener('click', () => {
-            fetch(`http://localhost:8080/memo/${this.title}`, {
+            fetch(`/memo/${this._id}`, {
 		    	method: 'DELETE',
 		    	headers: { 
 		    		'Content-Type': 'application/json',
 		    		'Accept': 'application/json'
                 },
-                body: JSON.stringify({data: {
-                        title: this.title, 
-                    }
+                body: JSON.stringify({
+                        _id: this._id, 
                 })
             })
-            // tabs 배열에서도 없애야 함 -> event bubbling
-            // node 삭제와 dom 삭제 모두 이벤트 버블링으로 tabList로 보내서 처리
             this.dom.dispatchEvent(new CustomEvent('closeTab', {
                 bubbles: true,
                 detail: { tab: this }
@@ -135,14 +144,16 @@ class Tab {
     }
 
     // 2. title, memo 로드
-    _loadNotePad() {
+    _loadNotePad(_id) {
         this.dom.addEventListener('click', () => {
-            this.dom.dispatchEvent(new CustomEvent('unselectAll'));
+            this.dom.dispatchEvent(new CustomEvent('unselectAll', {
+                bubbles: true
+            }));
             this.dom.classList.add('selected');
 
             this.loadMemo();
             this.loadTitle();
-            this._saveContent(this.index);
+            this._saveContent(_id);
         })
     }
 
@@ -162,35 +173,35 @@ class Tab {
         })
     }
 
-    _saveContent(index) {
+    _saveContent(_id) {
         const titleArea = document.querySelector('.memo .title');
         document.querySelector('.submit-btn').addEventListener('click', () => {
-            console.log(this.index)
             this.saveMemo({
-                index,
+                _id,
                 title: titleArea.value,
                 content: this.memo.content
             })
         })
     }
 
-    saveMemo({index, title, content}) {
-        fetch('http://localhost:8080/memo', {
+    saveMemo({_id, title, content}) {
+        fetch('/memo', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
 				'Accept': 'application/json'
 			},
-			body: JSON.stringify({data: {
+			body: JSON.stringify({
                 title,
-                content
-            }})
+                content,
+                _id
+            })
 		})
 		.then(result => {
 			const newData = {
-				index,
-				title,
-				content
+                title,
+				content,
+				_id,
             }
 		}).then(
 			// memo가 업데이트 되어야 함
