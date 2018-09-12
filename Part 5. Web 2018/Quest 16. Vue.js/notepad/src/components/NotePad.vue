@@ -40,20 +40,6 @@ export default {
             .catch(e => {
                 console.error(e)
             })
-    },
-    method: {
-        newNote: function() {
-            vm.notes.push({
-                title: '',
-                content: '',
-                _id: Math.random().toString(36).substr(2, 9)
-            })
-            // this.id = Math.random().toString(36).substr(2, 9)
-        },
-        deleteNote: function() {
-            vm.notes.splice(this.index, 1);
-            // http
-        },
     }
 }
 </script>

@@ -5,7 +5,7 @@
         <li
             class="note-list-item"
             :class="{'active' : index === selectedNote}"
-            @click="selectNote(index)"
+            @click="selectNote(notes[index]._id, index)"
             :key="note.index"
             v-for="(note, index) of notes"
         >
@@ -20,25 +20,33 @@
 
 <script>
 import { eventBus } from '../main.js';
+
 export default {
     name: 'note-list',
-    props: ['notes', 'activeNote'], 
+    props: ['notes'],
     data: () => ({
         selectedNote: null
     }),
     created() {
-        this.$eventBus.$on('selectNote', (index) => {
+        this.$eventBus.$on('selectNote', (id, index) => {
             this.index = index;
         });
     },
     methods: {
-        selectNote(index) {
-            this.$eventBus.$emit('selectNote', index);
+        selectNote(id, index) {
+            this.$eventBus.$emit('selectNote', id, index);
             this.$data.selectedNote = index;
         },
         makeNewNote() {
-            this.$eventBus.$emit('makeNewNote')
-            // [TODO] input, textarea를 비우고 모두 초기화
+            this.$data.selectedNote = null
+            const newData = {
+                _id: Math.random().toString(36).substr(2, 9),
+                title: '',
+                content: '',
+            }
+            // this.$eventBus.$emit('makeNewNote', newData)
+            // [TODO] 새 메뉴를 눌렀을 때 배열 길이가 n+1개 이상이면 더이상 + 버튼 활성화가 안되도록 하기
+            this.$props.notes.push(newData)
         },
     },
 }

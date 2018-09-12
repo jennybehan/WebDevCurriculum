@@ -5,12 +5,14 @@
             type="text" 
             placeholder="노트 제목"
             class="title"
+            @blur="blurTitleFunc"
         >
         <textarea
             v-model="content"
             type="text" 
             class="content"
             placeholder="노트 내용을 적어주세요."
+            @blur="blurContentFunc"
         >
         </textarea>
         <div class="button-wrapper">
@@ -21,7 +23,9 @@
 </template>
 
 <script>
+// [TODO] 선택된 상황에서만(_id가 있는 상황에서만) button click 가능하게
 import { eventBus } from '../main.js';
+
 const baseUrl = 'http://localhost:3000'
 const config = {
     headers: {
@@ -59,18 +63,22 @@ export default {
         }
     },
     created() {
-        this.$eventBus.$on('selectNote', (index) => {
-            this.note = this.notes[index];
+        this.$eventBus.$on('selectNote', (id, index) => {
+            this.note = this.notes.filter(el => el._id === id)[0]
             document.querySelector('.note .title').value = this.note.title;
             document.querySelector('.note .content').value = this.note.content;
         });
+        // this.$eventBus.$on('makeNewNote', () => {
+        //     document.querySelector('.note .title').value = data.title
+        //     document.querySelector('.note .content').value = data.content
+        // })
     },
     methods: {
         saveNote() {
             const body = {
                 _id: this.notes._id || Math.random().toString(36).substr(2, 9),
                 title: this.notes.title,
-                content: this.notes.content // content 값이 들어가지 않음
+                content: this.notes.content
             }
             let vm = this;
             this.$http
@@ -79,12 +87,17 @@ export default {
                 .then(location.reload(true))
         },
         deleteNote() {
-            // [TODO] 선택된 상황에서만(_id가 있는 상황에서만) button click 가능하게
             this.$http
                 .delete(`${baseUrl}/memo/${this.note._id}`, 
                         this.note._id)
                 .then(res => console.log(res))
                 .then(location.reload(true))
+        },
+        blurTitleFunc() {
+            this.note.title = document.querySelector('.note .title').value;
+        },
+        blurContentFunc() {
+            this.note.content = document.querySelector('.note .content').value
         },
     }
 }
