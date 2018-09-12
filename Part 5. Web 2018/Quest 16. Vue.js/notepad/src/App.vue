@@ -1,7 +1,10 @@
 <template>
   <div id="app">
     <header>
-      <p>📝 Note-app</p>
+      <div>
+        <p>📝 Note-app</p>
+      </div>
+      <NoteLogin />
     </header>
     <NotePad />
   </div>
@@ -9,10 +12,12 @@
 
 <script>
 import NotePad from './components/NotePad.vue'
+import NoteLogin from './components/NoteLogin.vue'
 
 export default {
   name: 'app',
   components: {
+    NoteLogin,
     NotePad,
   }
 }
@@ -27,9 +32,11 @@ export default {
 }
 
 header {
-  height: 3rem;
-  padding: 0 1rem 0;
   border-bottom: 1px solid#d1caca;
+}
+
+header p {
+  padding: 1rem;
   font-size: 20px;
   font-weight: 800;
 }
