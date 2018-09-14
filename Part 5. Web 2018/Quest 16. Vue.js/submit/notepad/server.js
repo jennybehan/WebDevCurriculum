@@ -99,14 +99,22 @@ const writeFileDataAsync = (pathName, fileText) => {
 	})
 }
 
-app.post('/login', (req, res, next) => {
+app.post('/login', async (req, res, next) => {
 	const id = req.body.id;
 	const pw = req.body.pw;
+	const pathName = path.join(__dirname, 'memo');
+	const fileNames = await getFileNameAsync(pathName);
+
+	console.log(fileNames)
 	try {
 		if (findUser(id, pw)) {
-			console.log(req.session)
 			req.session.username = id;
-			res.status(200).send('로그인')
+			req.session.userdata = {
+				// files: fileNames,
+				// selectedFile: [selectedFileId],
+				// cursorPosition: [cursor position in selectedFile]
+			}
+			res.status(200).send(req.session)
 		} else {
 			res.status(401).send('유효하지 않습니다. 다시 로그인해주세요.')
 		}
@@ -117,8 +125,9 @@ app.post('/login', (req, res, next) => {
 
 app.post('/logout', (req, res) => {
 	res.clearCookie('secretkey');
+	delete req.session.username
 	req.session.destroy(() => {
-		res.status(200).redirect('/');
+		res.status(200).redirect('/memo');
 	});
 })
 
@@ -139,12 +148,13 @@ app.get('/memo', async (req, res, next) => {
 	try {
 		const pathName = path.join(__dirname, 'memo');
 		const fileNames = await getFileNameAsync(pathName);
+
 		if (fileNames) {
 			const data = fileNames.map(
 				fileName => {
 					const content = fs.readFileSync(pathName + '/' + fileName).toString();
+					console.log(content)
 					const data = JSON.parse(content);
-					console.log('GET memo data: ', data)
 					return data
 				})
 			res.status(200).send({data});
@@ -160,7 +170,6 @@ app.get('/memo', async (req, res, next) => {
 app.post('/memo', async (req, res) => {
 	try {
 		const data = req.body;
-		console.log('POST memo data: ', req.body)
 		const pathName = path.join(__dirname, 'memo');
 		const fileName = data._id; // changed
 		

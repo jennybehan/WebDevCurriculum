@@ -35,11 +35,10 @@ export default {
             .get(`${baseUrl}/memo`, config)
             .then(res => {
                 vm.notes = res.data.data
+                vm.noteData = vm.notes.map(el => el.noteData)
                 return vm.notes
             })
-            .catch(e => {
-                console.error(e)
-            })
+            .catch(e => console.error(e))
     }
 }
 </script>

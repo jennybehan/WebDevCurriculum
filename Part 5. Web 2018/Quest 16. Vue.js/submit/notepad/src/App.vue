@@ -4,7 +4,9 @@
       <div>
         <p>📝 Note-app</p>
       </div>
-      <NoteLogin />
+      <NoteLogin 
+        :userData="userData"
+      />
     </header>
     <NotePad />
   </div>
@@ -19,7 +21,11 @@ export default {
   components: {
     NoteLogin,
     NotePad,
-  }
+  },
+  data: () => ({
+    userData: {},
+  }),
+  methods: {}
 }
 </script>
 
@@ -65,5 +71,10 @@ button {
     box-shadow: 1px 1px 1px #eeeeee;
     margin: 5px;
     font-size: 18px;
+}
+
+button:hover {
+  opacity: .8;
+  cursor: pointer;
 }
 </style>

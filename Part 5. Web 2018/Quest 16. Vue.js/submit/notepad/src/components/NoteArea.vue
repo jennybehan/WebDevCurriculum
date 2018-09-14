@@ -76,9 +76,17 @@ export default {
     methods: {
         saveNote() {
             const body = {
-                _id: this.notes._id || Math.random().toString(36).substr(2, 9),
-                title: this.notes.title,
-                content: this.notes.content
+                data: {
+                    _id: this.notes._id || Math.random().toString(36).substr(2, 9),
+                    title: this.notes.title,
+                    content: this.notes.content,
+                },
+                user: this.userData,
+                // userData: {
+                //     files: this.notes,
+                //     selectedFile: this.notes.selectedId,
+                //     cursorPosition: this.notes.cursorPosition
+                // },
             }
             let vm = this;
             this.$http
@@ -88,16 +96,16 @@ export default {
         },
         deleteNote() {
             this.$http
-                .delete(`${baseUrl}/memo/${this.note._id}`, 
-                        this.note._id)
+                .delete(`${baseUrl}/memo/${this.notes._id}`, 
+                        this.notes._id)
                 .then(res => console.log(res))
                 .then(location.reload(true))
         },
         blurTitleFunc() {
-            this.note.title = document.querySelector('.note .title').value;
+            this.notes.title = document.querySelector('.note .title').value
         },
         blurContentFunc() {
-            this.note.content = document.querySelector('.note .content').value
+            this.notes.content = document.querySelector('.note .content').value
         },
     }
 }
