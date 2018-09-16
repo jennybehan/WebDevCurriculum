@@ -35,20 +35,20 @@
 </template>
 
 <script>
-const baseUrl = "http://localhost:3000";
+const baseUrl = "http://localhost:3000"
 const config = {
     headers: {
         "Content-Type": "application/json",
         Accept: "application/json"
     }
-};
+}
 const loginConfig = {
     headers: {
         "Content-Type": "application/json",
         Accept: "application/json"
     },
     credentials: "include"
-};
+}
 
 export default {
     name: "login",
@@ -59,37 +59,34 @@ export default {
             pw: "" // hide?
         }
     }),
+    created() {
+        this.$eventBus.$on("setUserInfo", username => {
+            this.username = username
+        })
+    },
     methods: {
         setLogin() {
             this.$http
                 .post(`${baseUrl}/login`, this.$data.input, loginConfig)
                 .then(res => {
-                    // console.log(res.data); // username
-                    this.username = res.data.username;
-                    this.setUserInfo(res.data.username);
-                    const userInfo = document.querySelector(".user-info");
-                    userInfo.textContent = `${
-                        res.data.username
-                    }님이 로그인 했습니다.`;
+                    this.username = res.data.username
+                    this.$eventBus.$emit("setUserInfo", this.username)
+                    const userInfo = document.querySelector(".user-info")
+                    userInfo.textContent = `${res.data.username}님이 로그인 했습니다.`
                 })
-                .catch(e => console.error(e));
-        },
-        setUserInfo(username) {
-            this.$eventBus.$emit("setUserInfo", username);
-            this.$data.username = username;
+                .catch(e => console.error(e))
         },
         logout() {
-            this.$http
-                .post(`${baseUrl}/logout`, this.$data.input, loginConfig)
-                .then(res => {
-                    this.username = null;
-                    const userInfo = document.querySelector(".user-info");
-                    userInfo.textContent = "";
-                });
+            this.$http.post(`${baseUrl}/logout`, this.$data.input, loginConfig).then(res => {
+                this.username = null
+                this.$eventBus.$emit("setUserInfo", this.username)
+                const userInfo = document.querySelector(".user-info")
+                userInfo.textContent = ""
+            })
             // [TODO] error 처리
         }
     }
-};
+}
 </script>
 
 <style>

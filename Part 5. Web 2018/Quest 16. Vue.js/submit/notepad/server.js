@@ -19,7 +19,7 @@ app.use(
 		saveUninitialized: true,
 		cookie: {
 			secure: false,
-			maxAge: 864000
+			maxAge: 86400
 		}
 	})
 );
@@ -45,14 +45,13 @@ app.all("/*", (req, res, next) => {
 		"Access-Control-Allow-Headers",
 		"Origin, Content-Type, X-Requested-With, Authorization"
 	);
-	// if (!req.session.username) res.redirect('/login');
-	// else next();
-	next(); // login 여부에 따라 달라지게
+	// [TODO] login 여부에 따라 달라지게
+	// if (!req.session.username) {
+	// 	res.redirect('/')
+	// } else next();
+	console.log(req.session.username) // undefined. 세션 저장되지 않음
+	next();
 });
-
-// app.get('/', (req, res) => {
-// 	res.sendFile(path.join(__dirname, 'index.html'));
-// });
 
 app.use((req, res, next) => {
 	fs.readdir(__dirname + "/memo", err => {
@@ -117,22 +116,12 @@ const mkdirAsync = pathName => {
 	}).catch(err => {});
 };
 
-getCookies = request => {
-	let cookies = {};
-	request.headers && request.headers.cookie.split(';').forEach(function (cookie) {
-		var parts = cookie.match(/(.*?)=(.*)$/)
-		cookies[parts[1].trim()] = (parts[2] || '').trim();
-	});
-	return cookies;
-};
-
 app.post("/login", async (req, res, next) => {
 	const id = req.body.id;
 	const pw = req.body.pw;
 
 	const pathName = path.join(__dirname, "memo");
 	const fileNames = await getFileNameAsync(pathName);
-	// getCookies(req);
 
 	console.log('login before try :', req.session)
 	try {
@@ -142,7 +131,6 @@ app.post("/login", async (req, res, next) => {
 					res.status(401).send("유효하지 않습니다. 다시 로그인해주세요.");
 				} else {
 					req.session.username = id;
-					console.log(req.session)
 					success = true;
 					res.send({
 						username: id

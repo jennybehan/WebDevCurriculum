@@ -43,7 +43,7 @@ export default {
             }
         }
     },
-    props: ["_id", "notes"],
+    props: ["_id", "notes", "username"],
     computed: {
         title: {
             get() {
@@ -65,8 +65,14 @@ export default {
     created() {
         this.$eventBus.$on("selectNote", (id, index, data) => {
             console.log(id, index, data)
+            console.log(this.username)
             this.note = this.notes.filter(el => el._id === id)[0] || data
             this.note._id = id
+                ? id
+                : Math.random()
+                      .toString(36)
+                      .substr(2, 9)
+            this.note.user = this.username
             document.querySelector(".note .title").value = this.note ? this.note.title : data.title
             document.querySelector(".note .content").value = this.note ? this.note.content : data.content
         })
@@ -76,7 +82,8 @@ export default {
             const noteData = {
                 _id: this.note._id,
                 title: this.note.title,
-                content: this.note.content
+                content: this.note.content,
+                user: this.note.user
             }
             let vm = this
             this.$http.post(`${baseUrl}/memo`, noteData, config)
@@ -88,10 +95,10 @@ export default {
                 .then(res => console.log(res))
         },
         blurTitleFunc() {
-            this.notes.title = document.querySelector(".note .title").value
+            this.note.title = document.querySelector(".note .title").value
         },
         blurContentFunc() {
-            this.notes.content = document.querySelector(".note .content").value
+            this.note.content = document.querySelector(".note .content").value
         }
     }
 }

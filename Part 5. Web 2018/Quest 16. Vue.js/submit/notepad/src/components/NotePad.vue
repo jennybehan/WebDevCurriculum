@@ -1,18 +1,22 @@
 <template>
     <div class="main">
-        <NoteList 
+        <p v-if="!username">로그인이 필요합니다.</p>
+        <NoteList
+            v-if="username"
             :notes="notes"
         />
         <NoteArea
+            v-if="username"
             :notes="notes"
+            :username="username"
         />
     </div>
 </template>
 
 <script>
-import NoteList from "./NoteList.vue";
-import NoteArea from "./NoteArea.vue";
-import { eventBus } from "../main.js";
+import NoteList from "./NoteList.vue"
+import NoteArea from "./NoteArea.vue"
+import { eventBus } from "../main.js"
 
 export default {
     name: "notepad",
@@ -22,36 +26,35 @@ export default {
     },
     data: () => ({
         notes: [],
-        username: null
+        username: null,
+        enableNoteArea: false
     }),
-    created() {
-        this.$eventBus.$on("setUserInfo", username => {
-            this.$data.username = username;
-            return this.$data.username;
-        });
-    },
     mounted() {
-        const baseUrl = "http://localhost:3000";
-        const config = {
-            headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json"
+        this.$eventBus.$on("setUserInfo", username => {
+            this.username = username
+            console.log(this.username)
+            const baseUrl = "http://localhost:3000"
+            const config = {
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json"
+                }
             }
-        };
-        let vm = this;
-        // if (this.username) {
-        this.$http
-            .get(`${baseUrl}/memo`, config)
-            .then(res => {
-                vm.notes = res.data.data;
-                console.log(vm.notes);
-                vm.noteData = vm.notes.map(el => el.noteData);
-                return vm.notes;
-            })
-            .catch(e => console.error(e));
-        // }
+            let vm = this
+            if (this.username) {
+                this.$http
+                    .get(`${baseUrl}/memo`, config)
+                    .then(res => {
+                        vm.notes = res.data.data.filter(el => {
+                            return el.user === this.username
+                        })
+                        return vm.data
+                    })
+                    .catch(e => console.error(e))
+            }
+        })
     }
-};
+}
 </script>
 
 <style>

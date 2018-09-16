@@ -11,7 +11,8 @@
         >
             {{ notes[index].title }}
         </li>
-        <button 
+        <button
+            @blur="blurListItem"
             @click="makeNewNote"
             class="new-note-btn"
         >+</button>
@@ -26,7 +27,7 @@ export default {
     props: ["notes"],
     data: () => ({
         selectedNote: null,
-        newNote: { _id: "", title: "", content: "" }
+        newNote: { _id: "", title: "", content: "", user: "" }
     }),
     created() {
         this.$eventBus.$on("selectNote", (id, index, data) => {
@@ -35,21 +36,26 @@ export default {
     },
     methods: {
         selectNote(id, index, data) {
+            console
             this.$eventBus.$emit("selectNote", id, index, data)
-            this.$data.selectedNote = index
-            this.$data.newNote = data
+            this.selectedNote = index ? index : this.selectedNote
+            this.newNote = data ? data : this.newNote
         },
         makeNewNote() {
-            this.$data.selectedNote = this.notes.length
-
+            this.selectedNote = this.notes.length
             this.selectNote(
                 Math.random()
                     .toString(36)
                     .substr(2, 9),
-                this.$data.selectedNote,
-                this.$data.newNote
+                this.selectedNote,
+                this.newNote
             )
-            this.$props.notes.push(this.$data.newNote)
+            this.$props.notes.push(this.newNote)
+        },
+        blurListItem() {
+            // [TODO] 현재 상태를 초기화
+            this.selectedNote = null
+            this.newNote
         }
     }
 }
