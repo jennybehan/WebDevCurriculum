@@ -24,15 +24,15 @@
 
 <script>
 // [TODO] 선택된 상황에서만(_id가 있는 상황에서만) button click 가능하게
-import { eventBus } from "../main.js";
+import { eventBus } from "../main.js"
 
-const baseUrl = "http://localhost:3000";
+const baseUrl = "http://localhost:3000"
 const config = {
     headers: {
         "Content-Type": "application/json",
         Accept: "application/json"
     }
-};
+}
 
 export default {
     name: "notearea",
@@ -41,72 +41,60 @@ export default {
             note: {
                 _id: null
             }
-        };
+        }
     },
     props: ["_id", "notes"],
     computed: {
         title: {
             get() {
-                return this.note.title;
+                return this.note.title
             },
             set(value) {
-                this.note.title = value;
+                this.note.title = value
             }
         },
         content: {
             get() {
-                return this.note.content;
+                return this.note.content
             },
             set(value) {
-                this.note.content = value;
+                this.note.content = value
             }
         }
     },
     created() {
-        this.$eventBus.$on("selectNote", (id, index) => {
-            console.log(id, index);
-            const newData = {
-                _id: id,
-                title: "",
-                content: ""
-            };
-            this.note = this.notes.filter(el => el._id === id)[0] || newData;
-            document.querySelector(".note .title").value =
-                this.note.title || newData.title;
-            document.querySelector(".note .content").value =
-                this.note.content || newData.content;
-        });
+        this.$eventBus.$on("selectNote", (id, index, data) => {
+            console.log(id, index, data)
+            this.note = this.notes.filter(el => el._id === id)[0] || data
+            this.note._id = id
+            document.querySelector(".note .title").value = this.note.title || data.title
+            document.querySelector(".note .content").value = this.note.content || data.content
+        })
     },
     methods: {
         saveNote() {
             const noteData = {
-                _id:
-                    this.note._id ||
-                    Math.random()
-                        .toString(36)
-                        .substr(2, 9),
+                _id: this.note._id,
                 title: this.note.title,
                 content: this.note.content
-            };
-            let vm = this;
-            this.$http
-                .post(`${baseUrl}/memo`, noteData, config)
-                .then(this.notes.push(noteData));
+            }
+            let vm = this
+            this.$http.post(`${baseUrl}/memo`, noteData, config)
         },
         deleteNote() {
             this.$http
                 .delete(`${baseUrl}/memo/${this.note._id}`, this.note._id)
                 // .then(this.notes.$remove(this.note))
-                .then(res => console.log(res));
+                .then(res => console.log(res))
         },
         blurTitleFunc() {
-            this.notes.title = document.querySelector(".note .title").value;
+            this.notes.title = document.querySelector(".note .title").value
         },
         blurContentFunc() {
-            this.notes.content = document.querySelector(".note .content").value;
+            this.notes.content = document.querySelector(".note .content").value
         }
     }
-};
+}
 </script>
 
 <style>

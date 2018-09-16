@@ -19,42 +19,40 @@
 </template>
 
 <script>
-import { eventBus } from "../main.js";
+import { eventBus } from "../main.js"
 
 export default {
     name: "note-list",
     props: ["notes"],
     data: () => ({
-        selectedNote: null
+        selectedNote: null,
+        newNote: { _id: "", title: "", content: "" }
     }),
     created() {
-        this.$eventBus.$on("selectNote", (id, index) => {
-            this.index = index;
-        });
+        this.$eventBus.$on("selectNote", (id, index, data) => {
+            this.index = index
+        })
     },
     methods: {
-        selectNote(id, index) {
-            this.$eventBus.$emit("selectNote", id, index);
-            this.$data.selectedNote = index;
+        selectNote(id, index, data) {
+            this.$eventBus.$emit("selectNote", id, index, data)
+            this.$data.selectedNote = index
+            this.$data.newNote = data
         },
         makeNewNote() {
-            this.$data.selectedNote = this.notes.length;
-            // const newData = {
-            //     _id: Math.random()
-            //         .toString(36)
-            //         .substr(2, 9),
-            //     title: "",
-            //     content: ""
-            // };
-            const id = Math.random()
-                .toString(36)
-                .substr(2, 9);
-            const index = this.$data.selectedNote;
-            this.$eventBus.$emit("selectNote", id, index);
-            this.$props.notes.push({ title: "", content: "" });
+            this.$data.selectedNote = this.notes.length
+
+            this.selectNote(
+                Math.random()
+                    .toString(36)
+                    .substr(2, 9),
+                this.$data.selectedNote,
+                this.$data.newNote
+            )
+            this.$props.notes.push(this.$data.newNote)
         }
     }
-};
+}
 </script>
 
 <style>
