@@ -1,10 +1,10 @@
 const express = require('express'),
-	  path = require('path'),
-	  app = express(),
-	  bodyParser = require('body-parser'),
-	  fs = require('fs'),
-	  session = require('express-session'),
-	  cookieParser = require('cookie-parser');
+	path = require('path'),
+	app = express(),
+	bodyParser = require('body-parser'),
+	fs = require('fs'),
+	session = require('express-session'),
+	cookieParser = require('cookie-parser');
 
 // middlewares
 app.use(express.static('client')); // app.use(express.static('public')) : 정적 파일을 사용하기 위한 설정
@@ -17,12 +17,14 @@ app.use(session({
 	resave: false, // request가 요청되었을때, 기존의 session이 존재하는 경우 다시 저장할 필요가 있는지를 확인하는 option
 	saveUninitialized: false,
 	cookie: {
-		maxAge: 1000 * 60 * 30
+		path: '/',
+		// domain: 'http://localhost:8080',
+		secure: false,
+		maxAge: null
 	}
 }))
 
-const users = [
-	{
+const users = [{
 		userId: 'user01',
 		userPw: '1111'
 	},
@@ -36,17 +38,6 @@ const users = [
 	}
 ]
 
-app.use((req, res, next) => {
-	fs.readdir(__dirname + '/memo', (err)=>{
-		if(err) {
-			fs.mkdir(__dirname + '/memo',(err)=>{
-				if(err) console.error(err);
-			});
-		}
-	});
-	next();
-})
-
 app.all('/*', (req, res, next) => {
 	res.header('Access-Control-Allow-Origin', '*');
 	res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
@@ -54,13 +45,20 @@ app.all('/*', (req, res, next) => {
 	next();
 });
 
-app.get('/login', (req, res) => {
-	const session = req.session;
-	const cookie = req.cookie;
-	console.log(cookie)
-	if (session) {
-		console.log(req.session)
-	}
+app.use((req, res, next) => {
+	// if((req.session && req.session.username) || req.path === '/login') {
+	// 	return next();
+	// } else {
+	// 	return res.redirect('/login')
+	// }
+	fs.readdir(__dirname + '/memo', (err) => {
+		if (err) {
+			fs.mkdir(__dirname + '/memo', (err) => {
+				if (err) console.error(err);
+			});
+		}
+	});
+	next();
 })
 
 const findUser = (userId, userPw) => {
@@ -70,7 +68,7 @@ const findUser = (userId, userPw) => {
 const getFileNameAsync = (pathName) => {
 	return new Promise((resolve, reject) => {
 		fs.readdir(pathName, (err, data) => {
-			if(err) reject(err);
+			if (err) reject(err);
 			else resolve(data);
 		})
 	})
@@ -99,27 +97,38 @@ const writeFileDataAsync = (pathName, fileText) => {
 	})
 }
 
-app.post('/login', async (req, res, next) => {
-	const id = req.body.id;
-	const pw = req.body.pw;
-	const pathName = path.join(__dirname, 'memo');
-	const fileNames = await getFileNameAsync(pathName);
+const mkdirAsync = (pathName) => {
+	return new Promise((resolve, reject) => {
+		fs.mkdir(pathName, err => {
+			if (err) reject(err);
+			else resolve(pathName);
+		});
+	}).catch(err => {});
+}
 
-	console.log(fileNames)
+app.post('/login', async (req, res, next) => {
+	const id = req.body.id
+	const pw = req.body.pw
+
+	const pathName = path.join(__dirname, 'memo')
+	const fileNames = await getFileNameAsync(pathName)
+
 	try {
 		if (findUser(id, pw)) {
-			req.session.username = id;
-			req.session.userdata = {
-				// files: fileNames,
-				// selectedFile: [selectedFileId],
-				// cursorPosition: [cursor position in selectedFile]
-			}
-			res.status(200).send(req.session)
+			const session = req.session
+			session.username = id;
+			const userPath = path.join(__dirname, 'memo')
+
+			req.session.save(() => {
+				res.status(200).send(req.session)
+			})
 		} else {
 			res.status(401).send('유효하지 않습니다. 다시 로그인해주세요.')
 		}
-	} catch(error) {
-		res.status(500).json({ error: error.toString() })
+	} catch (error) {
+		res.status(500).json({
+			error: error.toString()
+		})
 	}
 });
 
@@ -132,32 +141,36 @@ app.post('/logout', (req, res) => {
 })
 
 app.get('/user', (req, res) => {
-	if(req.session){
+	if (req.session.username) {
 		res.status(200).send(
 			JSON.stringify({
 				username: req.session.username,
 				userdata: req.session.userdata
 			})
 		);
-	}else{
+	} else {
 		res.status(401).end();
 	}
 })
 
 app.get('/memo', async (req, res, next) => {
 	try {
+
 		const pathName = path.join(__dirname, 'memo');
 		const fileNames = await getFileNameAsync(pathName);
+		console.log(fileNames)
 
+		// fileName이 userid와 같을 때 이렇게 내보내주기...?
 		if (fileNames) {
 			const data = fileNames.map(
 				fileName => {
 					const content = fs.readFileSync(pathName + '/' + fileName).toString();
-					console.log(content)
-					const data = JSON.parse(content);
+					const contentJson = JSON.parse(content);
+					const data = contentJson.noteData
+
 					return data
 				})
-			res.status(200).send({data});
+			res.status(200).send(data[0]);
 		} else {
 			next()
 		}
@@ -172,7 +185,14 @@ app.post('/memo', async (req, res) => {
 		const data = req.body;
 		const pathName = path.join(__dirname, 'memo');
 		const fileName = data._id; // changed
-		
+		session.userdata = {
+			selectedFile: 'selectedFileId',
+			cursorPosition: ['cursorPosition']
+		}
+		req.session.save(() => {
+			res.status(200).send(req.session)
+		})
+
 		await writeFileDataAsync(pathName + '/' + fileName + '.json', JSON.stringify(data));
 		// res.cookie(`${req.session.username}.position`, input.position);
 		res.status(200).end();
@@ -186,7 +206,7 @@ app.delete(`/memo/:fileName`, (req, res) => {
 	const pathName = path.join(__dirname, 'memo');
 	console.log(req.params)
 	const fileName = req.params.fileName || 'title';
-	
+
 	fs.unlink(pathName + '/' + fileName + '.json', (err) => {
 		if (err) throw err;
 		console.log('deleted')
