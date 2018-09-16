@@ -3,7 +3,7 @@
         <div class="input-wrapper">
             <div 
                 class="user-info" 
-                v-if="enableLogin">
+                v-if="!username">
                     아이디 <input 
                         v-model="input.id"
                         type="text"
@@ -21,7 +21,7 @@
         </div>
         <div class="button-wrapper">
             <button
-                v-if="enableLogin"
+                v-if="!username"
                 class="login-btn"
                 @click="setLogin"
             >로그인</button>
@@ -37,77 +37,83 @@
 <script>
 const baseUrl = "http://localhost:3000";
 const config = {
-  headers: {
-    "Content-Type": "application/json",
-    Accept: "application/json"
-  }
+    headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json"
+    }
 };
 const loginConfig = {
-  headers: {
-    "Content-Type": "application/json",
-    Accept: "application/json"
-  },
-  credentials: "include"
+    headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json"
+    },
+    credentials: "include"
 };
 
 export default {
-  name: "login",
-  data: () => ({
-    input: {
-      id: "",
-      pw: "" // hide?
-    },
-    enableLogin: true
-  }),
-  methods: {
-    setLogin() {
-      this.$http
-        .post(`${baseUrl}/login`, this.$data.input, loginConfig)
-        .then(res => {
-          console.log(res.data); // session에 저장해 놓은 정보가 담김
-          // login에서 받은 정보를 다른 컴포넌트랑 공유하려면?
-          const userInfo = document.querySelector(".user-info");
-          userInfo.textContent = `${res.data.username}님이 로그인 했습니다.`;
-          this.$data.enableLogin = false;
-        })
-        .catch(e => console.error(e));
-    },
-    logout() {
-      this.$http
-        .post(`${baseUrl}/logout`, this.$data.input, loginConfig)
-        .then(res => {
-          const userInfo = document.querySelector(".user-info");
-          userInfo.textContent = "";
-          this.$data.enableLogin = true;
-        });
-      // [TODO] error 처리
+    name: "login",
+    data: () => ({
+        username: null,
+        input: {
+            id: "",
+            pw: "" // hide?
+        }
+    }),
+    methods: {
+        setLogin() {
+            this.$http
+                .post(`${baseUrl}/login`, this.$data.input, loginConfig)
+                .then(res => {
+                    // console.log(res.data); // username
+                    this.username = res.data.username;
+                    this.setUserInfo(res.data.username);
+                    const userInfo = document.querySelector(".user-info");
+                    userInfo.textContent = `${
+                        res.data.username
+                    }님이 로그인 했습니다.`;
+                })
+                .catch(e => console.error(e));
+        },
+        setUserInfo(username) {
+            this.$eventBus.$emit("setUserInfo", username);
+            this.$data.username = username;
+        },
+        logout() {
+            this.$http
+                .post(`${baseUrl}/logout`, this.$data.input, loginConfig)
+                .then(res => {
+                    this.username = null;
+                    const userInfo = document.querySelector(".user-info");
+                    userInfo.textContent = "";
+                });
+            // [TODO] error 처리
+        }
     }
-  }
 };
 </script>
 
 <style>
 .login {
-  margin-left: auto;
-  padding: 1rem;
-  border-top: 1px solid #d1caca;
+    margin-left: auto;
+    padding: 1rem;
+    border-top: 1px solid #d1caca;
 }
 
 .input-wrapper,
 .button-wrapper {
-  display: inline-block;
+    display: inline-block;
 }
 
 .input-wrapper {
-  margin-left: 10px;
+    margin-left: 10px;
 }
 
 .login input {
-  padding: 0.2rem 0.5rem;
-  font-size: 16px;
+    padding: 0.2rem 0.5rem;
+    font-size: 16px;
 }
 
 .hide {
-  display: none;
+    display: none;
 }
 </style>

@@ -1,11 +1,11 @@
 const express = require('express'),
-	  path = require('path'),
-	  app = express(),
-	  bodyParser = require('body-parser'),
-	  fs = require('fs'),
+	path = require('path'),
+	app = express(),
+	bodyParser = require('body-parser'),
+	fs = require('fs'),
 	//   util = require('util'),
-	  session = require('express-session'),
-	  cookieParser = require('cookie-parser');
+	session = require('express-session'),
+	cookieParser = require('cookie-parser');
 
 // middlewares
 app.use(express.static('client')); // app.use(express.static('public')) : 정적 파일을 사용하기 위한 설정
@@ -22,8 +22,7 @@ app.use(session({
 	}
 }))
 
-const users = [
-	{
+const users = [{
 		userId: 'user01',
 		userPw: '1111'
 	},
@@ -38,10 +37,10 @@ const users = [
 ]
 
 app.use((req, res, next) => {
-	fs.readdir(__dirname + '/memo', (err)=>{
-		if(err) {
-			fs.mkdir(__dirname + '/memo',(err)=>{
-				if(err) console.error(err);
+	fs.readdir(__dirname + '/memo', (err) => {
+		if (err) {
+			fs.mkdir(__dirname + '/memo', (err) => {
+				if (err) console.error(err);
 			});
 		}
 	});
@@ -68,7 +67,7 @@ const findUser = (userId, userPw) => {
 const getFileNameAsync = (pathName) => {
 	return new Promise((resolve, reject) => {
 		fs.readdir(pathName, (err, data) => {
-			if(err) reject(err);
+			if (err) reject(err);
 			else resolve(data);
 		})
 	})
@@ -104,12 +103,14 @@ app.post('/login', (req, res, next) => {
 		if (findUser(id, pw)) {
 			console.log(req.session)
 			req.session.username = id;
-			res.status(200).send('로그인')
+			res.status(200).send(JSON.stringify(session))
 		} else {
 			res.status(401).send('유효하지 않습니다. 다시 로그인해주세요.')
 		}
-	} catch(error) {
-		res.status(500).json({ error: error.toString() })
+	} catch (error) {
+		res.status(500).json({
+			error: error.toString()
+		})
 	}
 });
 
@@ -121,13 +122,14 @@ app.post('/logout', (req, res) => {
 })
 
 app.get('/user', (req, res) => {
-	if(req.session.username){
+	if (req.session.username) {
 		res.status(200).send(
 			JSON.stringify({
-				user: req.session.username
+				username: req.session.username,
+				userdata: req.session.userdata
 			})
 		);
-	}else{
+	} else {
 		res.status(401).end();
 	}
 })
@@ -144,7 +146,9 @@ app.get('/memo', async (req, res, next) => {
 					console.log('GET memo data: ', data)
 					return data
 				})
-			res.status(200).send({data});
+			res.status(200).send({
+				data
+			});
 		} else {
 			next()
 		}
@@ -160,7 +164,7 @@ app.post('/memo', async (req, res) => {
 		console.log('POST memo data: ', req.body)
 		const pathName = path.join(__dirname, 'memo');
 		const fileName = data._id; // changed
-		
+
 		await writeFileDataAsync(pathName + '/' + fileName + '.json', JSON.stringify(data));
 		// res.cookie(`${req.session.username}.position`, input.position);
 		res.status(200).end();
@@ -174,7 +178,7 @@ app.delete(`/memo/:fileName`, (req, res) => {
 	const pathName = path.join(__dirname, 'memo');
 	console.log(req.params)
 	const fileName = req.params.fileName || 'title';
-	
+
 	fs.unlink(pathName + '/' + fileName + '.json', (err) => {
 		if (err) throw err;
 		console.log('deleted')
