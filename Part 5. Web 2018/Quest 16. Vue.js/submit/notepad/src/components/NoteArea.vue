@@ -67,8 +67,8 @@ export default {
             console.log(id, index, data)
             this.note = this.notes.filter(el => el._id === id)[0] || data
             this.note._id = id
-            document.querySelector(".note .title").value = this.note.title || data.title
-            document.querySelector(".note .content").value = this.note.content || data.content
+            document.querySelector(".note .title").value = this.note ? this.note.title : data.title
+            document.querySelector(".note .content").value = this.note ? this.note.content : data.content
         })
     },
     methods: {
@@ -84,7 +84,7 @@ export default {
         deleteNote() {
             this.$http
                 .delete(`${baseUrl}/memo/${this.note._id}`, this.note._id)
-                // .then(this.notes.$remove(this.note))
+                .then(this.notes.splice(this.notes.indexOf(this.note), 1))
                 .then(res => console.log(res))
         },
         blurTitleFunc() {
