@@ -47,60 +47,57 @@ export default {
     computed: {
         title: {
             get() {
-                return this.notes.title;
+                return this.note.title;
             },
             set(value) {
-                this.notes.title = value;
+                this.note.title = value;
             }
         },
         content: {
             get() {
-                return this.notes.content;
+                return this.note.content;
             },
             set(value) {
-                this.notes.content = value;
+                this.note.content = value;
             }
         }
     },
     created() {
         this.$eventBus.$on("selectNote", (id, index) => {
-            this.note = this.notes.filter(el => el._id === id)[0];
-            document.querySelector(".note .title").value = this.note.title;
-            document.querySelector(".note .content").value = this.note.content;
+            console.log(id, index);
+            const newData = {
+                _id: id,
+                title: "",
+                content: ""
+            };
+            this.note = this.notes.filter(el => el._id === id)[0] || newData;
+            document.querySelector(".note .title").value =
+                this.note.title || newData.title;
+            document.querySelector(".note .content").value =
+                this.note.content || newData.content;
         });
-        // this.$eventBus.$on('makeNewNote', () => {
-        //     document.querySelector('.note .title').value = data.title
-        //     document.querySelector('.note .content').value = data.content
-        // })
     },
     methods: {
         saveNote() {
-            const body = {
+            const noteData = {
                 _id:
-                    this.notes._id ||
+                    this.note._id ||
                     Math.random()
                         .toString(36)
                         .substr(2, 9),
-                title: this.notes.title,
-                content: this.notes.content
-                // user: this.userData,
-                // userData: {
-                //     files: this.notes,
-                //     selectedFile: this.notes.selectedId,
-                //     cursorPosition: this.notes.cursorPosition
-                // },
+                title: this.note.title,
+                content: this.note.content
             };
             let vm = this;
             this.$http
-                .post(`${baseUrl}/memo`, body, config)
-                .then(result => console.log(result))
-                .then(location.reload(true));
+                .post(`${baseUrl}/memo`, noteData, config)
+                .then(this.notes.push(noteData));
         },
         deleteNote() {
             this.$http
-                .delete(`${baseUrl}/memo/${this.notes._id}`, this.notes._id)
-                .then(res => console.log(res))
-                .then(location.reload(true));
+                .delete(`${baseUrl}/memo/${this.note._id}`, this.note._id)
+                // .then(this.notes.$remove(this.note))
+                .then(res => console.log(res));
         },
         blurTitleFunc() {
             this.notes.title = document.querySelector(".note .title").value;

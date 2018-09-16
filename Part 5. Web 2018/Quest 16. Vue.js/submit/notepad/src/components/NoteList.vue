@@ -38,24 +38,20 @@ export default {
             this.$data.selectedNote = index;
         },
         makeNewNote() {
-            this.$data.selectedNote = null;
-            const newData = {
-                _id: Math.random()
-                    .toString(36)
-                    .substr(2, 9),
-                title: "",
-                content: ""
-                // noteData: {
-                //     _id: Math.random().toString(36).substr(2, 9),
-                //     title: '',
-                //     content: '',
-                // },
-                // user: 'user01'
-            };
-            // this.$eventBus.$emit('makeNewNote', newData)
-            // [TODO] 새 메뉴를 눌렀을 때 자동으로 n+1 번째 활성화
-            // [TODO] 새 메뉴를 눌렀을 때 배열 길이가 n+1개 이상이면 더이상 + 버튼 활성화가 안되도록 하기
-            this.$props.notes.push(newData);
+            this.$data.selectedNote = this.notes.length;
+            // const newData = {
+            //     _id: Math.random()
+            //         .toString(36)
+            //         .substr(2, 9),
+            //     title: "",
+            //     content: ""
+            // };
+            const id = Math.random()
+                .toString(36)
+                .substr(2, 9);
+            const index = this.$data.selectedNote;
+            this.$eventBus.$emit("selectNote", id, index);
+            this.$props.notes.push({ title: "", content: "" });
         }
     }
 };
