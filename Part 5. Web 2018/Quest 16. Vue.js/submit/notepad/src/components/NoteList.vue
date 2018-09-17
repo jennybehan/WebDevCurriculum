@@ -12,7 +12,6 @@
             {{ notes[index].title }}
         </li>
         <button
-            @blur="blurListItem"
             @click="makeNewNote"
             class="new-note-btn"
         >+</button>
@@ -30,19 +29,21 @@ export default {
         newNote: { _id: "", title: "", content: "", user: "" }
     }),
     created() {
-        this.$eventBus.$on("selectNote", (id, index, data) => {
+        this.$eventBus.$on("selectNote", (id, index) => {
             this.index = index
         })
     },
     methods: {
         selectNote(id, index, data) {
-            console
             this.$eventBus.$emit("selectNote", id, index, data)
             this.selectedNote = index ? index : this.selectedNote
             this.newNote = data ? data : this.newNote
         },
         makeNewNote() {
             this.selectedNote = this.notes.length
+            // 이미 newNote가 업데이트 되어버려서 여기 들어올 때도 또 겹침
+            // [TODO] 선택된 상태에서 새로 만들 때 초기화가 필요함
+            this.$eventBus.$emit("clearNote", this.selectedNote)
             this.selectNote(
                 Math.random()
                     .toString(36)
@@ -51,11 +52,6 @@ export default {
                 this.newNote
             )
             this.$props.notes.push(this.newNote)
-        },
-        blurListItem() {
-            // [TODO] 현재 상태를 초기화
-            this.selectedNote = null
-            this.newNote
         }
     }
 }

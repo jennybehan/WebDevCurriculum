@@ -49,7 +49,7 @@ app.all("/*", (req, res, next) => {
 	// if (!req.session.username) {
 	// 	res.redirect('/')
 	// } else next();
-	console.log(req.session.username) // undefined. 세션 저장되지 않음
+	// console.log(req.session.username) // undefined. 세션 저장되지 않음
 	next();
 });
 
@@ -123,7 +123,6 @@ app.post("/login", async (req, res, next) => {
 	const pathName = path.join(__dirname, "memo");
 	const fileNames = await getFileNameAsync(pathName);
 
-	console.log('login before try :', req.session)
 	try {
 		if (findUser(id, pw)) {
 			req.session.save(err => {
@@ -169,12 +168,9 @@ app.get("/user", (req, res) => {
 });
 
 app.get("/memo", async (req, res, next) => {
-	console.log('memo req.session: ', req.session)
-
 	try {
 		const pathName = path.join(__dirname, "memo");
 		const fileNames = await getFileNameAsync(pathName);
-		// fileName이 userid와 같을 때 이렇게 내보내주기...?
 		if (fileNames) {
 			const data = fileNames.map(fileName => {
 				const content = fs.readFileSync(pathName + "/" + fileName).toString();
@@ -184,7 +180,6 @@ app.get("/memo", async (req, res, next) => {
 			res.status(200).send({
 				data
 			});
-			// res.status(200).send(req.session)
 		} else {
 			next();
 		}

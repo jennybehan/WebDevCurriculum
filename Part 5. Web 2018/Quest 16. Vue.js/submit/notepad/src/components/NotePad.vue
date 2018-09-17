@@ -26,8 +26,7 @@ export default {
     },
     data: () => ({
         notes: [],
-        username: null,
-        enableNoteArea: false
+        username: null
     }),
     mounted() {
         this.$eventBus.$on("setUserInfo", username => {

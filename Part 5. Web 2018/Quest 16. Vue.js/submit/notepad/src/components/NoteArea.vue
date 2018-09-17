@@ -36,13 +36,11 @@ const config = {
 
 export default {
     name: "notearea",
-    data() {
-        return {
-            note: {
-                _id: null
-            }
+    data: () => ({
+        note: {
+            _id: null
         }
-    },
+    }),
     props: ["_id", "notes", "username"],
     computed: {
         title: {
@@ -79,19 +77,23 @@ export default {
     },
     methods: {
         saveNote() {
-            const noteData = {
+            let noteData = {
                 _id: this.note._id,
                 title: this.note.title,
                 content: this.note.content,
                 user: this.note.user
             }
             let vm = this
-            this.$http.post(`${baseUrl}/memo`, noteData, config)
+            this.$http
+                .post(`${baseUrl}/memo`, noteData, config)
+                .then((this.note = {})) // [TODO] 메모 저장한 뒤 초기화
+                .then((noteData = {}))
         },
         deleteNote() {
             this.$http
                 .delete(`${baseUrl}/memo/${this.note._id}`, this.note._id)
                 .then(this.notes.splice(this.notes.indexOf(this.note), 1))
+                .then((this.note = {}))
                 .then(res => console.log(res))
         },
         blurTitleFunc() {
