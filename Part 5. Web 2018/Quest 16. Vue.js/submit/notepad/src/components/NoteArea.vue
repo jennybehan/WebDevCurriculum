@@ -16,8 +16,8 @@
         >
         </textarea>
         <div class="button-wrapper">
-            <button v-if="note._id" @click="saveNote">save</button>
-            <button v-if="note._id" @click="deleteNote">delete</button>
+            <button v-if="note" @click="saveNote">save</button>
+            <button v-if="note._id && note.title && note.content" @click="deleteNote">delete</button>
         </div>
     </div>
 </template>
@@ -38,7 +38,9 @@ export default {
     name: "notearea",
     data: () => ({
         note: {
-            _id: null
+            _id: null,
+            title: "",
+            content: ""
         },
         selectedNote: null
     }),
