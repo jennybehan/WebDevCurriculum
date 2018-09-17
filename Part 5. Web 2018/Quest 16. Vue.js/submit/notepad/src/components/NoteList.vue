@@ -12,7 +12,7 @@
             {{ notes[index].title }}
         </li>
         <button
-            @click="makeNewNote"
+            @click="makeNewTab"
             class="new-note-btn"
         >+</button>
     </ul>
@@ -35,15 +35,14 @@ export default {
     },
     methods: {
         selectNote(id, index, data) {
+            console.log(id, index, data)
             this.$eventBus.$emit("selectNote", id, index, data)
             this.selectedNote = index ? index : this.selectedNote
             this.newNote = data ? data : this.newNote
         },
-        makeNewNote() {
+        makeNewTab() {
             this.selectedNote = this.notes.length
-            // 이미 newNote가 업데이트 되어버려서 여기 들어올 때도 또 겹침
-            // [TODO] 선택된 상태에서 새로 만들 때 초기화가 필요함
-            this.$eventBus.$emit("clearNote", this.selectedNote)
+            this.newNote = { title: "" }
             this.selectNote(
                 Math.random()
                     .toString(36)

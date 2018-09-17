@@ -16,8 +16,8 @@
         >
         </textarea>
         <div class="button-wrapper">
-            <button @click="saveNote">save</button>
-            <button @click="deleteNote">delete</button>
+            <button v-if="note._id" @click="saveNote">save</button>
+            <button v-if="note._id" @click="deleteNote">delete</button>
         </div>
     </div>
 </template>
@@ -39,7 +39,8 @@ export default {
     data: () => ({
         note: {
             _id: null
-        }
+        },
+        selectedNote: null
     }),
     props: ["_id", "notes", "username"],
     computed: {
@@ -63,7 +64,6 @@ export default {
     created() {
         this.$eventBus.$on("selectNote", (id, index, data) => {
             console.log(id, index, data)
-            console.log(this.username)
             this.note = this.notes.filter(el => el._id === id)[0] || data
             this.note._id = id
                 ? id
@@ -71,6 +71,7 @@ export default {
                       .toString(36)
                       .substr(2, 9)
             this.note.user = this.username
+            console.log(data)
             document.querySelector(".note .title").value = this.note ? this.note.title : data.title
             document.querySelector(".note .content").value = this.note ? this.note.content : data.content
         })
