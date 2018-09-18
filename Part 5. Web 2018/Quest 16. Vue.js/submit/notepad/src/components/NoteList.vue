@@ -28,11 +28,6 @@ export default {
         selectedNote: null,
         newNote: { _id: "", title: "", content: "", user: "" }
     }),
-    created() {
-        this.$eventBus.$on("selectNote", (id, index) => {
-            this.index = index
-        })
-    },
     methods: {
         selectNote(id, index, data) {
             console.log(id, index, data)

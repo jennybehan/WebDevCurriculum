@@ -59,11 +59,6 @@ export default {
             pw: "" // hide?
         }
     }),
-    created() {
-        this.$eventBus.$on("setUserInfo", username => {
-            this.username = username
-        })
-    },
     methods: {
         setLogin() {
             this.$http
