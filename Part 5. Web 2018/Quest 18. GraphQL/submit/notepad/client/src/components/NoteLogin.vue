@@ -65,6 +65,7 @@ export default {
             this.$http
                 .post(`${baseUrl}/login`, this.$data.input, loginConfig)
                 .then(res => {
+                    console.log(res)
                     this.username = res.data.username
                     this.$eventBus.$emit("setUserInfo", this.username)
                     const userInfo = document.querySelector(".user-info")

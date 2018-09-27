@@ -1,6 +1,16 @@
 import Vue from 'vue'
 import App from './App.vue'
 import axios from 'axios'
+import {
+    ApolloClient
+} from 'apollo-client'
+import {
+    HttpLink
+} from 'apollo-link-http'
+import {
+    InMemoryCache
+} from 'apollo-cache-inmemory'
+import VueApollo from 'vue-apollo'
 
 Vue.prototype.$http = axios
 
@@ -11,6 +21,23 @@ const store = {
         key: ''
     }
 };
+
+const httpLink = new HttpLink({
+    uri: 'https://localhost:3000/graphql'
+});
+
+const link = httpLink;
+
+const apolloClient = new ApolloClient({
+    link,
+    cache: new InMemoryCache(),
+    connectToDevTools: true,
+})
+
+
+const apolloProvider = new VueApollo({
+    defaultClient: apolloClient,
+})
 
 // Vue.protytpe에 전역 속성 추가
 Object.defineProperties(Vue.prototype, {
@@ -26,6 +53,14 @@ Object.defineProperties(Vue.prototype, {
     }
 });
 
+// new Vue({
+//     render: h => h(App)
+// }).$mount('#app')
+
+Vue.use(VueApollo)
+
 new Vue({
-    render: h => h(App)
-}).$mount('#app')
+    el: '#app',
+    apolloProvider,
+    render: h => h(App),
+})
