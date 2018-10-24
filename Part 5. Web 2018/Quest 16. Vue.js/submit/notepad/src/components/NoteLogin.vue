@@ -47,7 +47,8 @@ const loginConfig = {
         "Content-Type": "application/json",
         Accept: "application/json"
     },
-    credentials: "include"
+    credentials: "include",
+    withCredentials: true
 }
 
 export default {

@@ -7,6 +7,7 @@ const express = require("express"),
 	cookieParser = require("cookie-parser");
 
 // middlewares
+app.enable('trust proxy');
 app.use(express.static("client")); // app.use(express.static('public')) : 정적 파일을 사용하기 위한 설정
 app.use(bodyParser.json()); // parse requests of content-type - application/json
 app.use(cookieParser());
@@ -14,11 +15,12 @@ app.use(cookieParser());
 app.use(
 	session({
 		secret: "secretkey",
-		name: "sessionId",
-		resave: false, // request가 요청되었을때, 기존의 session이 존재하는 경우 다시 저장할 필요가 있는지를 확인하는 option
-		saveUninitialized: true,
+		// name: "sessionId",
+		// resave: false, // request가 요청되었을때, 기존의 session이 존재하는 경우 다시 저장할 필요가 있는지를 확인하는 option
+		// saveUninitialized: true,
 		cookie: {
-			secure: false,
+			secure: true,
+			// domain: 'http://localhost:8080',
 			maxAge: 86400
 		}
 	})
@@ -39,12 +41,14 @@ const users = [{
 ];
 
 app.all("/*", (req, res, next) => {
-	res.header("Access-Control-Allow-Origin", "*");
+	// webpack server port 주소 변경, 보안 문제(각각 내용 확인)
+	res.header("Access-Control-Allow-Origin", "http://localhost:8080");
 	res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
 	res.header(
 		"Access-Control-Allow-Headers",
-		"Origin, Content-Type, X-Requested-With, Authorization"
+		"Origin, Content-Type, X-Requested-With, Authorization, withCredentials"
 	);
+	res.header('Access-Control-Allow-Credentials', 'true')
 	// [TODO] login 여부에 따라 달라지게
 	// if (!req.session.username) {
 	// 	res.redirect('/')
@@ -77,21 +81,6 @@ const getFileNameAsync = pathName => {
 	});
 };
 
-const getFileDataAsync = filePath => {
-	return new Promise((resolve, reject) => {
-		fs.readFile(
-			filePath, {
-				encoding: "utf-8"
-			},
-			(err, data) => {
-				console.log("data: ", data);
-				if (err) reject(err);
-				else resolve(data);
-			}
-		);
-	});
-};
-
 const writeFileDataAsync = (pathName, fileText) => {
 	return new Promise((resolve, reject) => {
 		fs.writeFile(
@@ -107,21 +96,9 @@ const writeFileDataAsync = (pathName, fileText) => {
 	});
 };
 
-const mkdirAsync = pathName => {
-	return new Promise((resolve, reject) => {
-		fs.mkdir(pathName, err => {
-			if (err) reject(err);
-			else resolve(pathName);
-		});
-	}).catch(err => {});
-};
-
 app.post("/login", async (req, res, next) => {
 	const id = req.body.id;
 	const pw = req.body.pw;
-
-	const pathName = path.join(__dirname, "memo");
-	const fileNames = await getFileNameAsync(pathName);
 
 	try {
 		if (findUser(id, pw)) {
