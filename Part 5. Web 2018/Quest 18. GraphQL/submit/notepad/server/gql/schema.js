@@ -1,14 +1,13 @@
 const {
-    makeExecutableSchema,
-    addMockFunctionsToSchema
+    makeExecutableSchema
 } = require('graphql-tools');
 const resolvers = require('./resolvers');
-const mocks = require('./mock');
 
 const typeDefs = `
     type User {
-        id: String!
-        name: String!
+        id: String
+        pw: Int
+        name: String
         memos: [Memo]
     }
 
@@ -17,17 +16,17 @@ const typeDefs = `
     }
 
     type Memo {
-        _id: String!
+        _id: String
         title: String
         content: String
         user: String!
     }
 
     type Query {
-        User(id: ID!): User
-        Users: [User]
-        MemoList: [Memo]
-        Memo(id: ID!): Memo
+        getUsers: [User]
+        getUser(id: String): User
+        getMemoList: [Memo]
+        getMemo(_id: String): Memo
     }
 
     type Mutation {
@@ -41,11 +40,7 @@ const typeDefs = `
 
 const schema = makeExecutableSchema({
     typeDefs,
+    resolvers
 });
 
-addMockFunctionsToSchema({
-    schema,
-    mocks
-});
-
-export default schema;
+module.exports = schema;

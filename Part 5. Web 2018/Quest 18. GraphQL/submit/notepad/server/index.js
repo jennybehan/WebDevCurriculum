@@ -7,12 +7,12 @@ import bodyParser from 'body-parser';
 import schema from './gql/schema';
 
 const GRAPHQL_PORT = 3000;
-
 const graphQLServer = express();
 
 graphQLServer.use('/graphql', bodyParser.json(), graphqlExpress({
-    schema
+    schema,
 }));
+
 graphQLServer.use('/graphiql', graphiqlExpress({
     endpointURL: '/graphql'
 }));
