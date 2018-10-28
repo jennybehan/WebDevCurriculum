@@ -1,4 +1,4 @@
-// example data
+// user data
 const users = [{
         id: "user01",
         name: "jennybe",
@@ -16,42 +16,53 @@ const users = [{
     }
 ];
 
-const memos = [{
-        _id: "01",
-        title: 'Introduction to GraphQL',
-        content: "2"
-    },
-    {
-        _id: "02",
-        title: 'Welcome to Meteor',
-        content: "3"
-    },
-    {
-        _id: "03",
-        title: 'Advanced GraphQL',
-        content: "1"
-    },
-    {
-        _id: "04",
-        title: 'Launchpad is Cool',
-        content: "7"
-    },
-];
+var testObject = {
+    'one': 1,
+    'two': 2,
+    'three': 3
+};
+
+const fs = require('fs');
+const path = require('path');
+
+const pathName = path.join(__dirname);
+// let memoData = fs.readFileSync(pathName + '/data.json').toString();
+let memoData = require('./data');
+
+const {
+    writeMemo
+} = require('./helper');
 
 const resolvers = {
     Query: {
         getUsers: () => users,
         getUser: (getUsers, {
-            id
+            id,
+            pw
         }) => {
-            return users.find(user => user.id === id);
+            return users.find(user => user.id === id && user.pw === pw);
         },
-        getMemoList: () => memos,
+        getMemoList: () => memoData,
         getMemo: (getMemoList, {
             _id
         }) => {
-            return memos.find(memo => memo._id === _id);
+            if (_id) {
+                return memoData.find(memo => memo._id === _id);
+            } else {
+                next();
+            }
+        }
+    },
+    Mutation: {
+        createMemo: (getMemoList, args) => {
+            const newMemo = args;
+            args._id = Math.random().toString(36).substr(2, 9);
+            memoData.concat([newMemo]);
+            return newMemo;
         },
+        deleteMemo: (getMemoList, args) => {
+            delete memoData.find(memo => memo._id === args._id);
+        }
     }
 }
 
