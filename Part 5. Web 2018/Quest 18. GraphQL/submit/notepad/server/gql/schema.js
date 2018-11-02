@@ -25,6 +25,7 @@ const typeDefs = `
     type Query {
         getUsers: [User]
         getUser(id: String, pw: Int): User
+        login(id: String, pw: Int): User
         getMemoList: [Memo]
         getMemo(_id: String): Memo
     }

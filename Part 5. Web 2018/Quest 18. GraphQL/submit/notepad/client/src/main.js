@@ -23,17 +23,16 @@ const store = {
 };
 
 const httpLink = new HttpLink({
-    uri: 'https://localhost:3000/graphql'
-});
-
-const link = httpLink;
-
-const apolloClient = new ApolloClient({
-    link,
-    cache: new InMemoryCache(),
+    uri: 'http://localhost:3000',
+    // credentials: 'include',
     connectToDevTools: true,
 })
 
+const apolloClient = new ApolloClient({
+    link: httpLink,
+    cache: new InMemoryCache(),
+    connectToDevTools: true,
+})
 
 const apolloProvider = new VueApollo({
     defaultClient: apolloClient,

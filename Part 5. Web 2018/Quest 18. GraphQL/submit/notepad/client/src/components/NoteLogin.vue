@@ -35,21 +35,13 @@
 </template>
 
 <script>
-const baseUrl = "http://localhost:3000"
-const config = {
-    headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json"
-    }
-}
-const loginConfig = {
-    headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json"
-    },
-    credentials: "include",
-    withCredentials: true
-}
+import { LOGIN_MUTATION } from "./../graphql.js"
+import { login } from "../../resolvers.js"
+import gql from "graphql-tag"
+
+console.info(login)
+
+// console.info(LOGIN_MUTATION)
 
 export default {
     name: "login",
@@ -62,26 +54,26 @@ export default {
     }),
     methods: {
         setLogin() {
-            this.$http
-                .post(`${baseUrl}/login`, this.$data.input, loginConfig)
-                .then(res => {
-                    console.log(res)
-                    this.username = res.data.username
-                    this.$eventBus.$emit("setUserInfo", this.username)
-                    const userInfo = document.querySelector(".user-info")
-                    userInfo.textContent = `${res.data.username}님이 로그인 했습니다.`
+            this.$http.post(
+                "https://localhost:3000/login",
+                this.$apollo.mutate({
+                    mutation: gql`
+                        mutation LoginMutation($id: String!, $pw: Int!) {
+                            login(id: $id, pw: $pw)
+                        }
+                    `
                 })
-                .catch(e => console.error(e))
-        },
-        logout() {
-            this.$http.post(`${baseUrl}/logout`, this.$data.input, loginConfig).then(res => {
-                this.username = null
-                this.$eventBus.$emit("setUserInfo", this.username)
-                const userInfo = document.querySelector(".user-info")
-                userInfo.textContent = ""
-            })
-            // [TODO] error 처리
+            )
         }
+        // logout() {
+        //     this.$http.post(`${baseUrl}/logout`, this.$data.input, loginConfig).then(res => {
+        //         this.username = null
+        //         this.$eventBus.$emit("setUserInfo", this.username)
+        //         const userInfo = document.querySelector(".user-info")
+        //         userInfo.textContent = ""
+        //     })
+        // [TODO] error 처리
+        // }
     }
 }
 </script>

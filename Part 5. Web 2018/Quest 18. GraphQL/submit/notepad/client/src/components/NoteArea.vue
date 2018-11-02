@@ -65,7 +65,7 @@ export default {
     },
     created() {
         this.$eventBus.$on("selectNote", (id, index, data) => {
-            console.log(id, index, data)
+            // console.log(id, index, data)
             this.note = this.notes.filter(el => el._id === id)[0] || data
             this.note._id = id
                 ? id
@@ -73,7 +73,7 @@ export default {
                       .toString(36)
                       .substr(2, 9)
             this.note.user = this.username
-            console.log(data)
+            // console.log(data)
             document.querySelector(".note .title").value = this.note ? this.note.title : data.title
             document.querySelector(".note .content").value = this.note ? this.note.content : data.content
         })
