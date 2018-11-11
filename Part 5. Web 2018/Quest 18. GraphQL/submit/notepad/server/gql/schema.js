@@ -25,14 +25,13 @@ const typeDefs = `
     type Query {
         getUsers: [User]
         getUser(id: String, pw: Int): User
-        login(id: String, pw: Int): User
         getMemoList: [Memo]
         getMemo(_id: String): Memo
     }
 
     type Mutation {
         login(id: String, pw: Int!): User
-        createMemo(userId: ID!, title: String, content: String): Memo
+        createMemo(userId: String!, title: String, content: String): Memo
         motifyMemo(_id: ID!, title: String, content: String): Memo
         deleteMemo(_id: ID!, title: String, content: String): Memo
     }
