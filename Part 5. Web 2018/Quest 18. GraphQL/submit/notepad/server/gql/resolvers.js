@@ -72,26 +72,27 @@ const resolvers = {
         deleteMemo: (getMemoList, args) => {
             delete memoData.find(memo => memo._id === args._id);
         },
-        // login(getUsers, {
-        //     id,
-        //     pw
-        // }, context, info) {
-        //     try {
-        //         const findUser = users.find(user => user.id === id && user.pw === pw);
-        //         console.log(findUser);
-        //         // if (findUser.length > 0) {
-        //         if (findUser) {
-        //             let msg = 'success';
-        //         } else {
-        //             let msg = '비밀번호가 일치하지 않습니다.';
-        //         }
-        //         // } else {
-        //         //     msg = '아이디가 존재하지 않습나다.';
-        //         // }
-        //     } catch (error) {
-        //         console.log(error);
-        //     }
-        // },
+        login(getUsers, {
+            id,
+            pw
+        }, context, info) {
+            try {
+                const findUser = users.find(user => user.id === id && user.pw === pw);
+                // if (findUser.length > 0) {
+                if (findUser) {
+                    return findUser;
+                    let msg = 'success';
+                } else {
+                    let msg = '비밀번호가 일치하지 않습니다.';
+                }
+                // } else {
+                //     msg = '아이디가 존재하지 않습나다.';
+                // }
+                return findUser;
+            } catch (error) {
+                console.log(error);
+            }
+        },
     }
 }
 

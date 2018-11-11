@@ -23,7 +23,7 @@ const store = {
 };
 
 const httpLink = new HttpLink({
-    uri: 'http://localhost:3000',
+    uri: 'http://localhost:3000/graphql',
     // credentials: 'include',
     connectToDevTools: true,
 })

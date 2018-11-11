@@ -18,6 +18,8 @@ import NoteList from "./NoteList.vue"
 import NoteArea from "./NoteArea.vue"
 import { eventBus } from "../main.js"
 
+import gql from "graphql-tag"
+
 export default {
     name: "notepad",
     components: {
@@ -31,25 +33,25 @@ export default {
     mounted() {
         this.$eventBus.$on("setUserInfo", username => {
             this.username = username
-            console.log(this.username)
-            const baseUrl = "http://localhost:3000"
-            const config = {
-                headers: {
-                    "Content-Type": "application/json",
-                    Accept: "application/json"
-                }
-            }
-            let vm = this
+
             if (this.username) {
-                this.$http
-                    .get(`${baseUrl}/memo`, config)
-                    .then(res => {
-                        vm.notes = res.data.data.filter(el => {
-                            return el.user === this.username
-                        })
-                        return vm.data
+                this.$apollo
+                    .query({
+                        query: gql`
+                            query {
+                                getMemoList {
+                                    title
+                                    content
+                                    _id
+                                }
+                            }
+                        `
                     })
-                    .catch(e => console.error(e))
+                    .then(result => {
+                        result.data.getMemoList.map(memoItem => {
+                            this.notes.push(memoItem)
+                        })
+                    })
             }
         })
     }

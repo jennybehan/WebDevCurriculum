@@ -17,7 +17,7 @@
                         class="pw"
                     >
             </div>
-            <div v-else class="user-info"></div>
+            <div v-else class="user-info">{{username}} 님의 메모</div>
         </div>
         <div class="button-wrapper">
             <button
@@ -28,20 +28,13 @@
             <button
                 v-else
                 class="logout-btn"
-                @click="logout"
             >로그아웃</button>
         </div>
     </div>
 </template>
 
 <script>
-import { LOGIN_MUTATION } from "./../graphql.js"
-import { login } from "../../resolvers.js"
 import gql from "graphql-tag"
-
-console.info(login)
-
-// console.info(LOGIN_MUTATION)
 
 export default {
     name: "login",
@@ -54,16 +47,26 @@ export default {
     }),
     methods: {
         setLogin() {
-            this.$http.post(
-                "https://localhost:3000/login",
-                this.$apollo.mutate({
+            this.$apollo
+                .mutate({
                     mutation: gql`
-                        mutation LoginMutation($id: String!, $pw: Int!) {
-                            login(id: $id, pw: $pw)
+                        mutation($id: String, $pw: Int!) {
+                            login(id: $id, pw: $pw) {
+                                id
+                                pw
+                                name
+                            }
                         }
-                    `
+                    `,
+                    variables: {
+                        id: this.$data.input.id,
+                        pw: Number(this.$data.input.pw)
+                    }
                 })
-            )
+                .then(result => {
+                    this.username = result.data.login.name
+                    this.$eventBus.$emit("setUserInfo", this.username)
+                })
         }
         // logout() {
         //     this.$http.post(`${baseUrl}/logout`, this.$data.input, loginConfig).then(res => {

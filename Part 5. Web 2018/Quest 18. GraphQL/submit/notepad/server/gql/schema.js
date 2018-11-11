@@ -31,7 +31,7 @@ const typeDefs = `
     }
 
     type Mutation {
-        login(id: ID!, pw: String!): String
+        login(id: String, pw: Int!): User
         createMemo(userId: ID!, title: String, content: String): Memo
         motifyMemo(_id: ID!, title: String, content: String): Memo
         deleteMemo(_id: ID!, title: String, content: String): Memo
