@@ -42,15 +42,6 @@ const resolvers = {
         }) => {
             return users.find(user => user.id === id && user.pw === pw);
         },
-        login: (getUsers, {
-            id,
-            pw
-        }) => {
-            const findUser = users.find(user => user.id === id && user.pw === pw);
-            if (findUser) {
-                return findUser;
-            }
-        },
         getMemoList: () => memoData,
         getMemo: (getMemoList, {
             _id
@@ -58,7 +49,7 @@ const resolvers = {
             if (_id) {
                 return memoData.find(memo => memo._id === _id);
             } else {
-                next();
+                return
             }
         }
     },
