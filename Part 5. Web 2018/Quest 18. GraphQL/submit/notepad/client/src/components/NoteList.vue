@@ -21,6 +21,8 @@
 <script>
 import { eventBus } from "../main.js"
 
+import gql from "graphql-tag"
+
 export default {
     name: "note-list",
     props: ["notes"],
@@ -30,9 +32,31 @@ export default {
     }),
     methods: {
         selectNote(id, index, data) {
-            console.log(id, index, data)
-            this.$eventBus.$emit("selectNote", id, index, data)
             this.selectedNote = index ? index : this.selectedNote
+            this.$apollo
+                .query({
+                    query: gql`
+                        query($_id: _id) {
+                            getMemo {
+                                _id
+                                content
+                                title
+                            }
+                        }
+                    `,
+                    variables: {
+                        _id: this.notes.map(item => {
+                            if (item._id === this.notes[this.selectedNote]._id) {
+                                return item._id
+                            }
+                        })
+                    }
+                })
+                .then(result => {
+                    console.log("result: ", result)
+                })
+
+            this.$eventBus.$emit("selectNote", id, index)
             this.newNote = data ? data : this.newNote
         },
         makeNewTab() {
