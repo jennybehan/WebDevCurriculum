@@ -34,6 +34,8 @@ const config = {
     }
 }
 
+import gql from "graphql-tag"
+
 export default {
     name: "notearea",
     data: () => ({
@@ -64,8 +66,8 @@ export default {
         }
     },
     created() {
-        this.$eventBus.$on("selectNote", (id, index, data) => {
-            // console.log(id, index, data)
+        this.$eventBus.$on("selectNote", (id, index) => {
+            console.log(id, index)
             this.note = this.notes.filter(el => el._id === id)[0] || data
             this.note._id = id
                 ? id
@@ -73,24 +75,39 @@ export default {
                       .toString(36)
                       .substr(2, 9)
             this.note.user = this.username
-            // console.log(data)
             document.querySelector(".note .title").value = this.note ? this.note.title : data.title
             document.querySelector(".note .content").value = this.note ? this.note.content : data.content
         })
     },
+
     methods: {
         saveNote() {
-            let noteData = {
-                _id: this.note._id,
-                title: this.note.title,
-                content: this.note.content,
-                user: this.note.user
-            }
-            let vm = this
-            this.$http
-                .post(`${baseUrl}/memo`, noteData, config)
-                .then((this.note = {})) // [TODO] 메모 저장한 뒤 초기화
-                .then((noteData = {}))
+            this.$apollo
+                .mutate({
+                    mutation: gql`
+                        mutation($userId: String!, $title: String, $content: String) {
+                            createMemo(user: $userId, title: $title, content: $content) {
+                                user
+                                title
+                                content
+                            }
+                        }
+                    `,
+                    variables: {
+                        userId: this.username,
+                        title: this.note.title,
+                        content: this.note.content,
+                        user: this.note.user
+                    }
+                })
+                .then(result => {
+                    console.log(result)
+                    console.log(note)
+                })
+            // this.$http
+            //     .post(`${baseUrl}/memo`, noteData, config)
+            //     .then((this.note = {})) // [TODO] 메모 저장한 뒤 초기화
+            //     .then((noteData = {}))
         },
         deleteNote() {
             this.$http
