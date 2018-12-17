@@ -17,31 +17,30 @@
 
 ### `CREATE`, `SELECT`, `UPDATE`, `DELETE`
 
-SQL Statement
+#### SQL Statement
 
 -   Data Definition Statements: `CREATE`
 -   Data Manipulation Statements: `SELECT`, `UPDATE`, `DELETE`
 
-CREATE: 주어진 이름(`db_name`)으로 데이터베이스를 생성한다. CREATE 문을 사용하려면 데이터베이스에 대한 권한(?)이 필요하다. CREATE SCHEMA는 CREATE DATABASE와 같은 의미를 지닌다.
+*   CREATE: 주어진 이름(`db_name`)으로 데이터베이스를 생성한다. CREATE 문을 사용하려면 데이터베이스에 대한 권한(?)이 필요하다. CREATE SCHEMA는 CREATE DATABASE와 같은 의미를 지닌다.
 
 ```
 CREATE {DATABASE | SCHEMA} [IF NOT EXISTS] db_name
-
 ```
 
-SELECT: 하나 이상의 테이블에서 선택된 행을 검색하는 데 사용한다. (테이블을 참조하지 않고 계산 된 행을 검색하는 데 사용될 수도 있음)
+-   SELECT: 하나 이상의 테이블에서 선택된 행을 검색하는 데 사용한다. (테이블을 참조하지 않고 계산 된 행을 검색하는 데 사용될 수도 있음)
 
 ```
 SELECT t1.*, t2.* FROM t1 INNER JOIN t2 ...
 ```
 
-UPDATE: 테이블의 행을 수정한다. `WITH` 절로 시작하여 액세스 할 공통 테이블 표현식을 정의할 수도 있다.
+-   UPDATE: 테이블의 행을 수정한다. `WITH` 절로 시작하여 액세스 할 공통 테이블 표현식을 정의할 수도 있다.
 
 ```
 UPDATE t SET id = id + 1;
 ```
 
-DELETE: 테이블 내에서 행을 제거하고 삭제된 행의 수를 반환한다. `WITH` 절로 시작하여 액세스 할 공통 테이블 표현식을 정의할 수도 있다.
+-   DELETE: 테이블 내에서 행을 제거하고 삭제된 행의 수를 반환한다. `WITH` 절로 시작하여 액세스 할 공통 테이블 표현식을 정의할 수도 있다.
 
 다음 단일 테이블 삭제 예제에서 `where_condition`은 삭제할 행을 식별하는 조건이다. `WHERE` 절이 없으면 모든 행이 삭제된다. `ORDER BY` 절은 행이 삭제되는 순서를 지정한다. `LIMIT` 절은 삭제할 수 있는 행 수를 제한한다(단일 테이블 삭제에서만 적용, 다중 테이블 삭제에는 적용되지 않음).
 
@@ -104,15 +103,13 @@ ORDER BY timestamp_column LIMIT 1;
 
 ### DB에 사용자의 암호를 평문으로 저장하지 않고도 사용자의 암호를 인증하는 것이 가능한 이유는 무엇일까요?
 
-서버에서 secret key를 가지고 실제 암호가 아니라 암호화 된 내용을 저장한다?
-평문으로 풀려면 sectet key가 필요함
-encrypt
+서버에서 secret key를 가지고 실제 암호가 아니라 암호화 된 내용을 저장하기 때문에. 다시 평문으로 풀려면 sectet key가 필요하다.
 
 ## Quest
 
 ### 로컬 MySQL 서버에서 Quest 12~13의 결과물을 MySQL 기반으로 만들어 보고자 합니다.
 
--   먼저 테이블이 어떻게 설계되어야 할지, 어떤 정보를 담고 있어야 할지 생각해 보세요
+> 먼저 테이블이 어떻게 설계되어야 할지, 어떤 정보를 담고 있어야 할지 생각해 보세요
 
 #### memo table
 
@@ -151,11 +148,11 @@ CREATE TABLE memo
 
 ```sql
 CREATE TABLE users
-  (
-    userId VARCHAR(32) NOT NULL,
-    userPw VARCHAR(256) NOT NULL,
-    openLog VARCHAR(50)
-  ) ENGINE=INNODB;
+(
+  userId VARCHAR(32) NOT NULL,
+  userPw VARCHAR(256) NOT NULL,
+  openLog VARCHAR(50)
+) ENGINE=INNODB;
 ```
 
 ```sql
@@ -168,8 +165,8 @@ CREATE TABLE users
 +---------+--------------+------+-----+---------+-------+
 ```
 
--   사용자의 암호는 어떤 식으로 저장해야 할까요?
+> 사용자의 암호는 어떤 식으로 저장해야 할까요?
 
 서버에서 해시함수로 암호화 해서 저장한다.
 
-    **주의: 실제 node.js 프로그래밍을 할 필요는 없습니다. 알맞는 테이블만 생성하고 그 생성을 위한 SQL문을 제시하면 됩니다!**
+**주의: 실제 node.js 프로그래밍을 할 필요는 없습니다. 알맞는 테이블만 생성하고 그 생성을 위한 SQL문을 제시하면 됩니다!**
