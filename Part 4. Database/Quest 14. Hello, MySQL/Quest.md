@@ -28,7 +28,6 @@ CREATE TABLE memos
 -   UserId
 -   UserPw
 -   openLog
--   ..?
 
 ```sql
 CREATE TABLE users
