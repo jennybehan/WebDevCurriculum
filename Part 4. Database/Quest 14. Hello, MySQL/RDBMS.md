@@ -96,14 +96,66 @@ ORDER BY timestamp_column LIMIT 1;
 
 ### RDBMS에서 테이블의 인덱싱은 무엇인가요? 인덱싱을 하면 어떤 점이 다르며, 어떤 식으로 동작하나요?
 
-테이블 내의 1개 이상의 컬럼을 값과 키-값(원본 테이블의 컬럼과 값인가?)으로 매칭하여 별도의 참조 테이블처럼 만드는 것.
+테이블 데이터를 조회할 때 빠르고 효과적으로 조회할 수 있도록 돕는 SortedList. 테이블 내의 1개 이상의 컬럼을 값과 키-값으로 매칭하여 별도의 참조 테이블처럼 만드는 것.
 
--   특징: 테이블에 대한 별도의 참조 테이블 같은 형식. 값을 찾아오는 데에는 빠르지만, 수정, 삭제할 때는 인덱스 테이블을 갱신해야 하기 때문에 느리다.(시간-용량 trade-off)
+-   특징: 테이블에 대한 별도의 참조 테이블 같은 형식. 값을 찾아오는 데에는 빠르지만 수정, 삭제할 때는 인덱스 테이블을 갱신해야 하기 때문에 느리다. (이미 정렬되어 있으므로 찾아오는 것은 빠르지만 변경할 때 다시 정렬해서 저장해야 하므로 수행 시간이 늘어남)
 -   동작: 만약 테이블이 쿼리에 있는 컬럼에 대한 인텍스를 가지고 있다면, 모든 데이터를 조사하지 않고 인덱싱 된 테이블에서 필드를 검색해 온다.
+
+-   컬럼을 하나만 지정해서 효율적으로 사용하려면 중복이 적은 컬럼을 인덱스로 만드는 것이 좋다(최대한 많이 걸러내기 위해). 여러 개의 컬럼을 지정할 경우 중복이 많은 순에서 적은 순으로 컬럼을 지정하는 것이 좋다.
+
+```sql
+CREATE INDEX index_name
+ON table_name (column 1, column2, ...);
+```
+
+```sql
+CREATE UNIQUE INDEX index_name
+ON table_name (column 1, column2, ...);
+```
 
 ### DB에 사용자의 암호를 평문으로 저장하지 않고도 사용자의 암호를 인증하는 것이 가능한 이유는 무엇일까요?
 
 서버에서 secret key를 가지고 실제 암호가 아니라 암호화 된 내용을 저장하기 때문에. 다시 평문으로 풀려면 sectet key가 필요하다.
+
+### 기타
+
+-   NOT NULL
+
+*   열이 NULL 값을 가질 수 없음을 보장합니다.
+
+-   UNIQUE
+
+*   열의 모든 값이 서로 다른지 확인한다. 해당 열이나 열 집합의 고유성을 보장한다. (PRIMARY KEY 조건에는 자동으로 UNIQUE 제약 조건이 있다.)
+
+-   PRIMARY KEY
+
+*   NOT NULL과 UNIQUE의 조합. UNIQUE 값을 포함해야 하고 NULL 값은 포함할 수 없다.
+*   테이블의 각 행을 고유하게 식별함.
+*   테이블당 하나만 존재해야 하지만 하나 또는 여러 개의 필드로 구성될 수 있다.
+
+```sql
+CREATE TABLE Persons (
+  ID int NOT NULL,
+  username VARCHAR(32) NOT NULL,
+  PRIMARY KEY (ID)
+)
+```
+
+-   FOREIGN KEY(외래키)
+
+*   서로 다른 테이블을 연결할 때 사용하는 키. 다른 테이블의 행, 레코드를 고유하게 식별
+*   다른 테이블의 PRIMARY KEY를 참조하는 한 테이블의 필드(혹은 필드 모음)
+*   외래 키가 들어있는 테이블이 하위 테이블이다. 해당 후보 키를 가지고 있는 테이블이 상위 테이블이다.
+*   테이블 사이에 기본키와 외래키를 매칭해서 의미없는 레코드의 조합을 제거할 수 있다.
+
+```sql
+CREATE TABLE Memos (
+  memoId INT NOT NULL,
+  username VARCHAR(32) NOT NULL,
+  PRIMIARY KEY (memoID),
+  FOREIGN KEY (ID) REFERENCES Persons(ID)
+)
+```
 
 ## Quest
 
@@ -119,24 +171,15 @@ ORDER BY timestamp_column LIMIT 1;
 -   Content
 
 ```sql
-CREATE TABLE memo
+CREATE TABLE memos
 (
-  userId VARCHAR(32) NOT NULL,
-  postId INT PRIMARY KEY AUTO_INCREMENT,
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   title VARCHAR(50) NOT NULL,
-  content VARCHAR(300)
-) ENGINE=INNODB;
-```
-
-```sql
-+---------+--------------+------+-----+---------+----------------+
-| Field | Type | Null | Key | Default | Extra |
-+---------+--------------+------+-----+---------+----------------+
-| userId | varchar(32) | NO | | NULL | |
-| postId | int(11) | NO | PRI | NULL | auto_increment |
-| title | varchar(50) | NO | | NULL | |
-| content | varchar(300) | YES | | NULL | |
-+---------+--------------+------+-----+---------+----------------+
+  content VARCHAR(300),
+  FOREIGN KEY(id)
+    REFERENCES users(id)
+    ON DELETE CASCADE
+);
 ```
 
 #### user table
@@ -149,20 +192,27 @@ CREATE TABLE memo
 ```sql
 CREATE TABLE users
 (
-  userId VARCHAR(32) NOT NULL,
-  userPw VARCHAR(256) NOT NULL,
-  openLog VARCHAR(50)
-) ENGINE=INNODB;
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  account VARCHAR(32) NOT NULL,
+  password VARCHAR(256) NOT NULL,
+  author VARCHAR(32) NOT NULL,
+  UNIQUE KEY user_account(account)
+);
 ```
 
 ```sql
-+---------+--------------+------+-----+---------+-------+
-| Field   | Type         | Null | Key | Default | Extra |
-+---------+--------------+------+-----+---------+-------+
-| userId  | varchar(32)  | NO   |     | NULL    |       |
-| userPw  | varchar(256) | NO   |     | NULL    |       |
-| openLog | varchar(50)  | YES  |     | NULL    |       |
-+---------+--------------+------+-----+---------+-------+
+CREATE TABLE access_log
+(
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+
+  FOREIGN KEY(id)
+    REFERENCES users(id)
+    ON DELETE CASCADE
+);
+
+-- order by updated_at
 ```
 
 > 사용자의 암호는 어떤 식으로 저장해야 할까요?
