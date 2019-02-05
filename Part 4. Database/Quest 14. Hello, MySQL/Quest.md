@@ -15,9 +15,10 @@
 CREATE TABLE memos
 (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
   title VARCHAR(50) NOT NULL,
   content VARCHAR(300),
-  FOREIGN KEY(id)
+  FOREIGN KEY(user_id)
     REFERENCES users(id)
     ON DELETE CASCADE
 );
@@ -37,6 +38,7 @@ CREATE TABLE users
   account VARCHAR(32) NOT NULL,
   password VARCHAR(256) NOT NULL,
   author VARCHAR(32) NOT NULL,
+  numberofmemo INT
   UNIQUE KEY user_account(account)
 );
 ```
@@ -48,7 +50,7 @@ CREATE TABLE access_log
   user_id INT NOT NULL,
   updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
 
-  FOREIGN KEY(id)
+  FOREIGN KEY(user_id)
     REFERENCES users(id)
     ON DELETE CASCADE
 );
