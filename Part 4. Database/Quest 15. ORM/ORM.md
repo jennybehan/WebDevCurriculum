@@ -10,6 +10,8 @@
 
 ### sequelize
 
+자바스크립트 구문을 자동으로 SQL로 변경해주므로 직접 SQL 문을 사용할 필요가 없다.
+
 ### 모델간의 관계들(BelongsTo, HasOne, HasMany, BelongsToMany)
 
 sequelize에서 연관 관계를 생성하기 위한 함수들. 모델(소스)에 있는 belongsTo, hasOne, hasMany, belongsToMany 함수 중 하나를 호출할 때 다른 모델을 함수(대상)의 첫번재 인수로 제공한다.
@@ -37,4 +39,58 @@ sequelize에서 연관 관계를 생성하기 위한 함수들. 모델(소스)�
 
 ### 모델간의 1:1, 1:N, N:M 관계는 각각 무엇이고 어떨 때 사용하나요?
 
-모델: 모델은 데이터베이스의 테이블을 나타낸다. 클래스의 인스턴스는 데이터베이스의 행을 의미한다.
+모델: 모델은 데이터베이스의 테이블을 나타냄.
+
+#### 1:1 관계
+
+-   데이터 A가 자신의 정보를 담고있는 테이블과만 관계가 있는 경우. ex. 작성자(1):작성자에 대한 정보(1)
+-   USER -> `hasMany` -> MEMO
+-   MEMO -> `belongsTo` -> MEMO
+
+```javascript
+db.User.hasMany(db.Memo, {
+    foreignKey: "author",
+    sourceKey: "id"
+})
+db.Memo.belongsTo(db.User, {
+    foreignKey: "author",
+    targetKey: "id"
+})
+```
+
+#### 1:N 관계
+
+-   데이터 A는 여러개의 데이터 B를 만들 수 있지만 데이터 B는 하나의 데이터 A만 가지는 경우. ex. 작성자(1):메모(N)
+-   USER -> `hasOne` -> INFO
+-   INFO -> `belongsTo` -> USER
+
+```javascript
+db.User.hasOne(db.Info, {
+    foreignKey: "user_id",
+    sourceKey: "id"
+})
+db.Info.belongsTo(db.User, {
+    foreignKey: "user_id",
+    targetKey: "id"
+})
+```
+
+#### N:M 관계
+
+-   데이터 A에 여러개의 데이터 B가 만들어질 수 있으며 반대로 데이터 B도 데이터 A에 여러개 달릴 수 있다. ex. 메모(N):해시태그(M)
+-   MEMO -> `belongsToMany` -> TAG
+-   TAG -> `belongsToMany` -> MEMO
+
+```javascript
+db.Memo.belongsToMany(db.Tag, {
+    through: "MemoHashTag"
+})
+db.Tag.belongsToMany(db.Memo, {
+    through: "MemoHashTag"
+})
+
+// through 속성에 이름을 적어주면 모델이 생성된다.
+// Memo의 아이디와 Tag의 아이디가 저장된다.
+```
+
+MySQL에서는 JOIN이라는 기능으로 여러 테이블 간의 관계를 파악해 결과를 도출한다. 시퀄라이즈는 JOIN 기능을 알아서 구현해 주는 대신 테이블 간에 어떤 관계가 있는 지 알려줘야 한다.
