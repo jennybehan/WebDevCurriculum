@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const router = express.router();
+const router = express.Router();
 const app = express();
 
 const authors = require('./controllers/authors.js');
@@ -28,8 +28,8 @@ router.post('/authors', authors.create);
 router.put('/authors', authors.update);
 router.delete('/authors', authors.delete);
 
-router.get('/memos', memos.index);
-router.get('/memos/:id', memos.show);
+router.get('/memos', memos.findAll);
+router.get('/memos/:id', memos.findById);
 router.post('/memos', memos.create);
 router.put('/memos', memos.update);
 router.delete('/memos', memos.delete);
