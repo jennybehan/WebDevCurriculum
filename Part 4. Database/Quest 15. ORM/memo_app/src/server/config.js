@@ -1,6 +1,6 @@
 module.exports = {
-    database: 'sequelize_db',
+    database: 'memo',
     dialects: 'mysql',
-    username: 'juyeon',
-    password: 'test'
+    username: 'root',
+    password: 'gkswndus8162'
 };
