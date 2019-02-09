@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    let Author = sequelize.define('Author', {
+    const Author = sequelize.define('Author', {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
         underscored: true,
         classMethods: {
             associate: function (models) {
-                Author.hasMany(models.Book, {
+                Author.hasMany(models.Memo, {
                     onDelete: 'cascade'
                 });
             }

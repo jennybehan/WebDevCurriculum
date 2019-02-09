@@ -32,14 +32,13 @@ module.exports = {
             sendError(res, error);
         });
     },
+    // 필요할까??..
     update(req, res) {
-        Author.update(
-            req.body, {
-                where: {
-                    id: req.params.id
-                }
+        Author.update(req.body, {
+            where: {
+                id: req.params.id
             }
-        ).then(updatedAuthor => {
+        }).then(updatedAuthor => {
             sendResult(res, updatedAuthor);
         }).catch(error => {
             sendError(res, error);
